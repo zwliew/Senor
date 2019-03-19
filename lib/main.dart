@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  static const TITLE = 'Senor';
+  static const _title = 'Senor';
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: TITLE,
+      title: _title,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: TITLE),
+      home: MyHomePage(title: _title),
     );
   }
 }
@@ -78,9 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        child: _buildSelectedPageWidget(),
-      ),
+      body: _buildSelectedPageWidget(),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -101,11 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class MessagesPage extends StatelessWidget {
+  static const _peers = [
+    'Timmy',
+    'Samantha',
+    'Zac',
+    'Linda',
+  ];
+
   @override
   Widget build(BuildContext context) {
     // TODO: Implement the Messages page
-    return Center(
-      child: Text('Messages'),
+    return ListView(
+      children: _peers.map((name) => ListTile(title: Text(name))).toList(),
     );
   }
 }
