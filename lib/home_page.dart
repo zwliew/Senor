@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:random_color/random_color.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key, this.title}) : super(key: key);
@@ -102,12 +103,76 @@ class DiscoverPage extends StatelessWidget {
         }
 
         return ListView.builder(
-          itemCount: snapshot.data.documents.length,
-          itemBuilder: (context, index) => ListTile(
-                title: Text(snapshot.data.documents[index]['name']),
-              ),
-        );
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  final user = snapshot.data.documents[index];
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileRoute(
+                            profile: UserProfile(
+                              username: user['name'],
+                              name: user['name'],
+                              reputation: user['reputation'],
+                              isAdmin: user['isAdmin'],
+                            ),
+                          ),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  leading:
+                      UserIcon(name: snapshot.data.documents[index]['name']),
+                  title: Text(snapshot.data.documents[index]['name']),
+                ),
+              );
+            });
       },
     );
+  }
+}
+
+class UserIcon extends StatelessWidget {
+  final String name;
+
+  const UserIcon({Key key, @required this.name}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final RandomColor color = RandomColor();
+    return CircleAvatar(
+      backgroundColor: color.randomColor(),
+      child: Text(name.substring(0, 2)),
+    );
+  }
+}
+
+class UserProfile {
+  final String username;
+  final String name;
+  final int reputation;
+  final bool isAdmin;
+
+  const UserProfile({this.username, this.name, this.reputation, this.isAdmin});
+}
+
+class ProfileRoute extends StatelessWidget {
+  final profile;
+
+  const ProfileRoute({Key key, @required this.profile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
+        ),
+        body: Column(
+          children: [
+            UserIcon(name: profile.name.substring(0, 2)),
+          ],
+        ));
   }
 }
