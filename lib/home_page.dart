@@ -95,7 +95,12 @@ class DiscoverPage extends StatelessWidget {
     return StreamBuilder(
       stream: Firestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const CircularProgressIndicator();
+        if (!snapshot.hasData) {
+          return const Center(
+            child: const CircularProgressIndicator(),
+          );
+        }
+
         return ListView.builder(
           itemCount: snapshot.data.documents.length,
           itemBuilder: (context, index) => ListTile(

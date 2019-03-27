@@ -10,22 +10,26 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Welcome to $title'),
-        RaisedButton(
-          onPressed: () async {
-            final googleSignIn = GoogleSignIn();
-            final googleUser = await googleSignIn.signIn();
-            if (googleUser == null) return;
+        Text(title),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RaisedButton(
+            onPressed: () async {
+              final googleSignIn = GoogleSignIn();
+              final googleUser = await googleSignIn.signIn();
+              if (googleUser == null) return;
 
-            final googleAuth = await googleUser.authentication;
-            final credential = GoogleAuthProvider.getCredential(
-              accessToken: googleAuth.accessToken,
-              idToken: googleAuth.idToken,
-            );
-            FirebaseAuth.instance.signInWithCredential(credential);
-          },
-          child: const Text('Login with Google'),
+              final googleAuth = await googleUser.authentication;
+              final credential = GoogleAuthProvider.getCredential(
+                accessToken: googleAuth.accessToken,
+                idToken: googleAuth.idToken,
+              );
+              FirebaseAuth.instance.signInWithCredential(credential);
+            },
+            child: const Text('Login with Google'),
+          ),
         ),
       ],
     );
