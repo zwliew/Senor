@@ -54,6 +54,13 @@ class ProfileRoute extends StatelessWidget {
     return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
   }
 
+  _contactUser() {
+    // TODO: Add a method of contacting a user
+    // This could be a built-in messaging platform,
+    // or a user-defined mode of communication.
+    // Examples include WhatsApp, Facebook, Instagram.
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,6 +126,13 @@ class ProfileRoute extends StatelessWidget {
                         ],
                       ),
                     ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    onPressed: _contactUser,
+                    child: const Text('Contact Me'),
                   ),
                 ),
               ],
