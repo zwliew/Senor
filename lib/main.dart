@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import './login_page.dart';
 import './home_page.dart';
 
@@ -7,6 +9,9 @@ void main() => runApp(App());
 
 class App extends StatelessWidget {
   static const _title = 'Senor';
+
+  static final analytics = FirebaseAnalytics();
+  static final observer = FirebaseAnalyticsObserver(analytics: analytics);
 
   // This widget is the root of your application.
   @override
@@ -25,6 +30,7 @@ class App extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      navigatorObservers: [observer],
       home: const AppHome(title: _title),
     );
   }
@@ -41,7 +47,7 @@ class AppHome extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const WaitingPage();
+            return const LoadingPage();
           }
           if (snapshot.hasData) {
             return HomePage(title: title);
@@ -51,8 +57,8 @@ class AppHome extends StatelessWidget {
   }
 }
 
-class WaitingPage extends StatelessWidget {
-  const WaitingPage({Key key}) : super(key: key);
+class LoadingPage extends StatelessWidget {
+  const LoadingPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
