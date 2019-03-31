@@ -50,7 +50,7 @@ class AppHome extends StatelessWidget {
             return const LoadingPage();
           }
           if (snapshot.hasData) {
-            return HomePage(title: title);
+            return HomePage();
           }
           return LoginPage(title: title);
         });
