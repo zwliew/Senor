@@ -102,30 +102,23 @@ class DiscoverPage extends StatelessWidget {
           );
         }
 
+        final docs = snapshot.data.documents;
         return ListView.builder(
-            itemCount: snapshot.data.documents.length,
+            itemCount: docs.length,
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  final user = snapshot.data.documents[index];
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileRoute(
-                            profile: UserProfile(
-                              username: user['name'],
-                              name: user['name'],
-                              reputation: user['reputation'],
-                              isAdmin: user['isAdmin'],
-                            ),
-                          ),
+                      builder: (context) =>
+                          ProfileRoute(uid: docs[index].documentID),
                     ),
                   );
                 },
                 child: ListTile(
-                  leading:
-                      UserIcon(name: snapshot.data.documents[index]['name']),
-                  title: Text(snapshot.data.documents[index]['name']),
+                  leading: UserIcon(displayName: docs[index]['displayName']),
+                  title: Text(docs[index]['displayName']),
                 ),
               );
             });
@@ -135,44 +128,49 @@ class DiscoverPage extends StatelessWidget {
 }
 
 class UserIcon extends StatelessWidget {
-  final String name;
+  final String displayName;
 
-  const UserIcon({Key key, @required this.name}) : super(key: key);
+  const UserIcon({Key key, @required this.displayName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final RandomColor color = RandomColor();
     return CircleAvatar(
       backgroundColor: color.randomColor(),
-      child: Text(name.substring(0, 2)),
+      child: Text(displayName.substring(0, 2)),
     );
   }
 }
 
-class UserProfile {
-  final String username;
-  final String name;
-  final int reputation;
-  final bool isAdmin;
-
-  const UserProfile({this.username, this.name, this.reputation, this.isAdmin});
-}
-
 class ProfileRoute extends StatelessWidget {
-  final profile;
+  final uid;
 
-  const ProfileRoute({Key key, @required this.profile}) : super(key: key);
+  const ProfileRoute({Key key, @required this.uid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile'),
-        ),
-        body: Column(
-          children: [
-            UserIcon(name: profile.name.substring(0, 2)),
-          ],
-        ));
+      appBar: AppBar(
+        title: const Text('Profile'),
+      ),
+      body: StreamBuilder(
+        stream:
+            Firestore.instance.collection('users').document(uid).snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: const CircularProgressIndicator(),
+            );
+          }
+
+          final data = snapshot.data;
+          return Column(
+            children: [
+              UserIcon(displayName: data['displayName']),
+            ],
+          );
+        },
+      ),
+    );
   }
 }
