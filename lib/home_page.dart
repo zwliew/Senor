@@ -106,19 +106,21 @@ class DiscoverPage extends StatelessWidget {
         return ListView.builder(
             itemCount: docs.length,
             itemBuilder: (context, index) {
+              final doc = docs[index];
               return InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileRoute(uid: docs[index].documentID),
+                      builder: (context) => ProfileRoute(uid: doc.documentID),
                     ),
                   );
                 },
                 child: ListTile(
-                  leading: UserIcon(displayName: docs[index]['displayName']),
-                  title: Text(docs[index]['displayName']),
+                  leading: UserIcon(
+                    photoUrl: doc['photoUrl'],
+                  ),
+                  title: Text(doc['displayName']),
                 ),
               );
             });
@@ -128,16 +130,38 @@ class DiscoverPage extends StatelessWidget {
 }
 
 class UserIcon extends StatelessWidget {
+  static final _randomColor = RandomColor();
   final String displayName;
+  final String photoUrl;
 
-  const UserIcon({Key key, @required this.displayName}) : super(key: key);
+  const UserIcon({Key key, this.displayName, this.photoUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final RandomColor color = RandomColor();
+    // Display the user's photo if available
+    if (photoUrl != null) {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(photoUrl),
+      );
+    }
+
+    // Otherwise, display the user's initials with a random BG color
+    if (displayName != null) {
+      return CircleAvatar(
+        backgroundColor: _randomColor.randomColor(),
+        child: Text(displayName
+            .split(' ')
+            .take(2)
+            .map((s) => s.substring(0, 1))
+            .join('')
+            .toUpperCase()),
+      );
+    }
+
+    // Else, display a smiley face with a random BG color
     return CircleAvatar(
-      backgroundColor: color.randomColor(),
-      child: Text(displayName.substring(0, 2)),
+      backgroundColor: _randomColor.randomColor(),
+      child: const Text(':D'),
     );
   }
 }
@@ -151,7 +175,7 @@ class ProfileRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('User Profile'),
       ),
       body: StreamBuilder(
         stream:
@@ -166,7 +190,9 @@ class ProfileRoute extends StatelessWidget {
           final data = snapshot.data;
           return Column(
             children: [
-              UserIcon(displayName: data['displayName']),
+              UserIcon(
+                photoUrl: data['photoUrl'],
+              ),
             ],
           );
         },
