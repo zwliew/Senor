@@ -11,8 +11,7 @@ class LoginPage extends StatelessWidget {
   _signIn() async {
     // Sign in with Google
     // TODO: Support more login methods
-    final googleSignIn = GoogleSignIn();
-    final googleUser = await googleSignIn.signIn();
+    final googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
       // Do nothing if the user cancelled the login process
       return;
@@ -45,18 +44,23 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(title),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: RaisedButton(
-            onPressed: _signIn,
-            child: const Text('Login with Google'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(title),
+          Center(
+            child: RaisedButton(
+              onPressed: _signIn,
+              child: const Text('Login with Google'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
