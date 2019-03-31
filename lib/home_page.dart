@@ -8,8 +8,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const _chatsIdx = 0;
+  static const _discoverIdx = 1;
+  static const _profileIdx = 2;
   static const _chatsTitle = 'Chats';
   static const _discoverTitle = 'Discover';
+  static const _profileTitle = 'Profile';
 
   int _selectedIdx = 0;
 
@@ -21,9 +25,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSelectedPageWidget() {
     switch (_selectedIdx) {
-      case 1:
+      case _discoverIdx:
         return DiscoverPage();
-      case 0:
+      case _profileIdx:
+        return MyProfilePage();
+      case _chatsIdx:
       default:
         return ChatsPage();
     }
@@ -32,10 +38,13 @@ class _HomePageState extends State<HomePage> {
   Text _buildPageTitle() {
     String title;
     switch (_selectedIdx) {
-      case 1:
+      case _discoverIdx:
         title = _discoverTitle;
         break;
-      case 0:
+      case _profileIdx:
+        title = _profileTitle;
+        break;
+      case _chatsIdx:
       default:
         title = _chatsTitle;
         break;
@@ -59,7 +68,11 @@ class _HomePageState extends State<HomePage> {
           const BottomNavigationBarItem(
             icon: const Icon(Icons.search),
             title: const Text(_discoverTitle),
-          )
+          ),
+          const BottomNavigationBarItem(
+            icon: const Icon(Icons.person_outline),
+            title: const Text(_profileTitle),
+          ),
         ],
         currentIndex: _selectedIdx,
         fixedColor: Colors.blue,
@@ -230,5 +243,12 @@ class ProfileRoute extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class MyProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
