@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:senor/my_chats_page.dart';
 import './discover_page.dart';
 import './my_profile_page.dart';
 
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         return MyProfilePage();
       case _chatsIdx:
       default:
-        return ChatsPage();
+        return MyChatsPage();
     }
   }
 
@@ -83,23 +84,6 @@ class _HomePageState extends State<HomePage> {
         fixedColor: Colors.blue,
         onTap: _handleNavigationItemTap,
       ),
-    );
-  }
-}
-
-class ChatsPage extends StatelessWidget {
-  static const _peers = [
-    'Timmy',
-    'Samantha',
-    'Zac',
-    'Linda',
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: Implement the ChatsPage
-    return ListView(
-      children: _peers.map((name) => ListTile(title: Text(name))).toList(),
     );
   }
 }
