@@ -133,14 +133,17 @@ class UserIcon extends StatelessWidget {
   static final _randomColor = RandomColor();
   final String displayName;
   final String photoUrl;
+  final double radius;
 
-  const UserIcon({Key key, this.displayName, this.photoUrl}) : super(key: key);
+  const UserIcon({Key key, this.displayName, this.photoUrl, this.radius = 20})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Display the user's photo if available
     if (photoUrl != null) {
       return CircleAvatar(
+        radius: radius,
         backgroundImage: NetworkImage(photoUrl),
       );
     }
@@ -148,6 +151,7 @@ class UserIcon extends StatelessWidget {
     // Otherwise, display the user's initials with a random BG color
     if (displayName != null) {
       return CircleAvatar(
+        radius: radius,
         backgroundColor: _randomColor.randomColor(),
         child: Text(displayName
             .split(' ')
@@ -160,6 +164,7 @@ class UserIcon extends StatelessWidget {
 
     // Else, display a smiley face with a random BG color
     return CircleAvatar(
+      radius: radius,
       backgroundColor: _randomColor.randomColor(),
       child: const Text(':D'),
     );
@@ -188,12 +193,43 @@ class ProfileRoute extends StatelessWidget {
           }
 
           final data = snapshot.data;
-          return Column(
-            children: [
-              UserIcon(
-                photoUrl: data['photoUrl'],
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: UserIcon(
+                      radius: 48,
+                      photoUrl: data['photoUrl'],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      data['displayName'],
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          data['reputation'].toString(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const Opacity(
+                          opacity: 0.8,
+                          child: Text('REP'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
