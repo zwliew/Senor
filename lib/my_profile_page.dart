@@ -45,7 +45,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
         final data = snapshot.data;
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               Padding(
@@ -93,6 +93,38 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                   ],
                 ),
+              ),
+              Column(
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 16.0),
+                    title: TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: const Icon(Icons.account_balance),
+                        border: const OutlineInputBorder(),
+                        labelText: 'University attended',
+                      ),
+                      onSubmitted: (value) {
+                        // TODO: Connect TextField to Firestore
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 16.0),
+                    title: TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: const Icon(Icons.golf_course),
+                        border: const OutlineInputBorder(),
+                        labelText: 'Extracurriculars taken',
+                      ),
+                      onSubmitted: (value) {
+                        // TODO: Connect TextField to Firestore
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
