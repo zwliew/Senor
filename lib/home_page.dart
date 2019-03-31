@@ -9,11 +9,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   static const _chatsIdx = 0;
+  static const _chatsTitle = 'My Chats';
+  static const _chatsLabel = 'Chats';
+
   static const _discoverIdx = 1;
-  static const _profileIdx = 2;
-  static const _chatsTitle = 'Chats';
   static const _discoverTitle = 'Discover';
-  static const _profileTitle = 'Profile';
+  static const _discoverLabel = _discoverTitle;
+
+  static const _profileIdx = 2;
+  static const _profileTitle = 'My Profile';
+  static const _profileLabel = 'Profile';
 
   int _selectedIdx = 0;
 
@@ -63,15 +68,15 @@ class _HomePageState extends State<HomePage> {
         items: [
           const BottomNavigationBarItem(
             icon: const Icon(Icons.message),
-            title: const Text(_chatsTitle),
+            title: const Text(_chatsLabel),
           ),
           const BottomNavigationBarItem(
             icon: const Icon(Icons.search),
-            title: const Text(_discoverTitle),
+            title: const Text(_discoverLabel),
           ),
           const BottomNavigationBarItem(
             icon: const Icon(Icons.person_outline),
-            title: const Text(_profileTitle),
+            title: const Text(_profileLabel),
           ),
         ],
         currentIndex: _selectedIdx,

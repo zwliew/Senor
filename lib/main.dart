@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:senor/loading_page.dart';
 import './login_page.dart';
 import './home_page.dart';
 
@@ -49,24 +51,11 @@ class AppHome extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingPage();
           }
+
           if (snapshot.hasData) {
             return HomePage();
           }
           return LoginPage(title: title);
         });
-  }
-}
-
-class LoadingPage extends StatelessWidget {
-  const LoadingPage({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Loading app...'),
-        const CircularProgressIndicator(),
-      ],
-    );
   }
 }

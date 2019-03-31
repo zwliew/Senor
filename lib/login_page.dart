@@ -36,6 +36,7 @@ class LoginPage extends StatelessWidget {
         'email': user.email,
         'displayName': user.displayName,
         'photoUrl': user.photoUrl,
+        'creationTimestamp': user.metadata.creationTimestamp,
         'reputation': 10,
         'isAdmin': false,
       });
