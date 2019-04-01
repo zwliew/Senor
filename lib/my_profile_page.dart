@@ -131,10 +131,11 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
               ),
             ),
             const Divider(),
-            const Text(
+            Text(
               'About myself',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             Padding(
@@ -185,39 +186,44 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
               icon: Icons.person_outline,
             ),
             const Divider(),
-            const Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: const Text(
-                'Education background',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+            Text(
+              'Education background',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
               ),
             ),
-            _buildTextFieldWidget(
-              field: 'universityAttended',
-              label: 'University attended',
-              icon: Icons.account_balance,
-            ),
-            _buildTextFieldWidget(
-              field: 'coursesPursued',
-              label: 'Courses pursued',
-              icon: Icons.book,
-            ),
-            _buildTextFieldWidget(
-              field: 'highSchoolAttended',
-              label: 'High school attended',
-              icon: Icons.account_balance,
-            ),
-            _buildTextFieldWidget(
-              field: 'extracurricularsTaken',
-              label: 'Extracurriculars taken',
-              icon: Icons.golf_course,
-            ),
-            _buildTextFieldWidget(
-              field: 'leadershipPositions',
-              label: 'Leadership positions',
-              icon: Icons.people,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                children: [
+                  _buildTextFieldWidget(
+                    field: 'universityAttended',
+                    label: 'University attended',
+                    icon: Icons.account_balance,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'coursesPursued',
+                    label: 'Courses pursued',
+                    icon: Icons.book,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'highSchoolAttended',
+                    label: 'High school attended',
+                    icon: Icons.account_balance,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'extracurricularsTaken',
+                    label: 'Extracurriculars taken',
+                    icon: Icons.golf_course,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'leadershipPositions',
+                    label: 'Leadership positions',
+                    icon: Icons.people,
+                  ),
+                ],
+              ),
             ),
           ],
         );
