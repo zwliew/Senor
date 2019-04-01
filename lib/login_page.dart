@@ -39,6 +39,8 @@ class LoginPage extends StatelessWidget {
         'creationTimestamp': user.metadata.creationTimestamp,
         'reputation': 10,
         'isAdmin': false,
+        'extracurricularsTaken': '',
+        'universityAttended': '',
       });
     });
   }

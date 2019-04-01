@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senor/loading_page.dart';
 import 'package:senor/user_icon.dart';
+import 'package:senor/util/debouncer.dart';
 
 class MyProfilePage extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   Future<Map<String, dynamic>> _profile;
+  DocumentReference _ref;
 
   @override
   void initState() {
@@ -21,8 +25,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Future<Map<String, dynamic>> _fetchProfile() async {
     final user = await FirebaseAuth.instance.currentUser();
-    final ref = Firestore.instance.collection('users').document(user.uid);
-    final snapshot = await ref.get();
+    _ref = Firestore.instance.collection('users').document(user.uid);
+    final snapshot = await _ref.get();
     return snapshot.data;
   }
 
@@ -99,29 +103,21 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 2.0, horizontal: 16.0),
-                    title: TextField(
-                      decoration: const InputDecoration(
-                        prefixIcon: const Icon(Icons.account_balance),
-                        border: const OutlineInputBorder(),
-                        labelText: 'University attended',
-                      ),
-                      onSubmitted: (value) {
-                        // TODO: Connect TextField to Firestore
-                      },
+                    title: MyProfileTextField(
+                      label: 'University attended',
+                      icon: Icons.account_balance,
+                      ref: _ref,
+                      field: 'universityAttended',
                     ),
                   ),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 2.0, horizontal: 16.0),
-                    title: TextField(
-                      decoration: const InputDecoration(
-                        prefixIcon: const Icon(Icons.golf_course),
-                        border: const OutlineInputBorder(),
-                        labelText: 'Extracurriculars taken',
-                      ),
-                      onSubmitted: (value) {
-                        // TODO: Connect TextField to Firestore
-                      },
+                    title: MyProfileTextField(
+                      label: 'Extracurriculars taken',
+                      icon: Icons.golf_course,
+                      ref: _ref,
+                      field: 'extracurricularsTaken',
                     ),
                   ),
                 ],
@@ -130,6 +126,85 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         );
       },
+    );
+  }
+}
+
+class MyProfileTextField extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  final DocumentReference ref;
+  final String field;
+
+  const MyProfileTextField({
+    Key key,
+    @required this.label,
+    @required this.icon,
+    @required this.ref,
+    @required this.field,
+  }) : super(key: key);
+
+  @override
+  _MyProfileTextFieldState createState() => _MyProfileTextFieldState();
+}
+
+class _MyProfileTextFieldState extends State<MyProfileTextField> {
+  // Delay in milliseconds after a text change to be sure
+  // that the user is not currently typing
+  static const _textEditDelayMs = 750;
+
+  final _controller = TextEditingController();
+  final _debouncer = Debouncer();
+  StreamSubscription _subscription;
+  int _lastEditedMs = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _subscription = widget.ref.snapshots().listen((snapshot) {
+      setState(() {
+        // Only update the TextEditingController when:
+        // 1. The text was not changed by the user in the app
+        // 2. The user is not currently editing the text
+        if (_controller.text != snapshot.data[widget.field] &&
+            DateTime.now().millisecondsSinceEpoch - _lastEditedMs >
+                _textEditDelayMs) {
+          _controller.text = snapshot.data[widget.field];
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _controller.dispose();
+
+    super.dispose();
+  }
+
+  void _handleValueChange(value) {
+    _lastEditedMs = DateTime.now().millisecondsSinceEpoch;
+    _debouncer.run(_textEditDelayMs, () {
+      Firestore.instance.runTransaction((tx) async {
+        await tx.update(widget.ref, {
+          widget.field: value.trim(),
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(
+        prefixIcon: Icon(widget.icon),
+        border: const OutlineInputBorder(),
+        labelText: widget.label,
+      ),
+      controller: _controller,
+      onChanged: _handleValueChange,
     );
   }
 }
