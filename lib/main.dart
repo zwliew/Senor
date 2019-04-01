@@ -6,13 +6,13 @@ import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/login_page.dart';
 import 'package:senor/home_page.dart';
 
-void main() => runApp(App());
+void main() => runApp(_App());
 
-class App extends StatelessWidget {
+class _App extends StatelessWidget {
   static const _title = 'Senor';
 
-  static final analytics = FirebaseAnalytics();
-  static final observer = FirebaseAnalyticsObserver(analytics: analytics);
+  static final _analytics = FirebaseAnalytics();
+  static final _observer = FirebaseAnalyticsObserver(analytics: _analytics);
 
   // This widget is the root of your application.
   @override
@@ -32,16 +32,16 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         accentColor: Colors.redAccent,
       ),
-      navigatorObservers: [observer],
-      home: const AppHome(title: _title),
+      navigatorObservers: [_observer],
+      home: const _AppHome(title: _title),
     );
   }
 }
 
-class AppHome extends StatelessWidget {
+class _AppHome extends StatelessWidget {
   final String title;
 
-  const AppHome({Key key, @required this.title}) : super(key: key);
+  const _AppHome({Key key, @required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
