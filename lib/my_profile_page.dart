@@ -61,96 +61,98 @@ class _MyProfilePageState extends State<MyProfilePage> {
         }
 
         final data = snapshot.data;
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: UserIcon(
-                  radius: 48,
-                  photoUrl: data['photoUrl'],
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: UserIcon(
+                    radius: 48,
+                    photoUrl: data['photoUrl'],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  data['displayName'],
-                  style: const TextStyle(fontSize: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    data['displayName'],
+                    style: const TextStyle(fontSize: 20),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            data['reputation'].toString(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const Opacity(
+                            opacity: 0.8,
+                            child: Text('REP'),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            _buildJoinedString(data['creationTimestamp']),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const Opacity(
+                            opacity: 0.8,
+                            child: const Text('JOINED'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          data['reputation'].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                    const Divider(),
+                    const Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: const Text(
+                        'Education background',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
-                        const Opacity(
-                          opacity: 0.8,
-                          child: Text('REP'),
-                        ),
-                      ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          _buildJoinedString(data['creationTimestamp']),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const Opacity(
-                          opacity: 0.8,
-                          child: const Text('JOINED'),
-                        ),
-                      ],
+                    _buildTextFieldWidget(
+                      field: 'universityAttended',
+                      label: 'University Attended',
+                      icon: Icons.account_balance,
+                    ),
+                    _buildTextFieldWidget(
+                      field: 'coursesPursued',
+                      label: 'Courses pursued',
+                      icon: Icons.book,
+                    ),
+                    _buildTextFieldWidget(
+                      field: 'highSchoolAttended',
+                      label: 'High school attended',
+                      icon: Icons.account_balance,
+                    ),
+                    _buildTextFieldWidget(
+                      field: 'extracurricularsTaken',
+                      label: 'Extracurriculars taken',
+                      icon: Icons.golf_course,
+                    ),
+                    _buildTextFieldWidget(
+                      field: 'leadershipPositions',
+                      label: 'Leadership positions',
+                      icon: Icons.people,
                     ),
                   ],
                 ),
-              ),
-              Column(
-                children: [
-                  const Divider(),
-                  const Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: const Text(
-                      'Education background',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  _buildTextFieldWidget(
-                    field: 'universityAttended',
-                    label: 'University Attended',
-                    icon: Icons.account_balance,
-                  ),
-                  _buildTextFieldWidget(
-                    field: 'coursesPursued',
-                    label: 'Courses pursued',
-                    icon: Icons.book,
-                  ),
-                  _buildTextFieldWidget(
-                    field: 'highSchoolAttended',
-                    label: 'High school attended',
-                    icon: Icons.account_balance,
-                  ),
-                  _buildTextFieldWidget(
-                    field: 'extracurricularsTaken',
-                    label: 'Extracurriculars taken',
-                    icon: Icons.golf_course,
-                  ),
-                  _buildTextFieldWidget(
-                    field: 'leadershipPositions',
-                    label: 'Leadership positions',
-                    icon: Icons.people,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
