@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:senor/loading_page.dart';
-import 'package:senor/user_icon.dart';
+import 'package:senor/ui/loading_indicator.dart';
+import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/debouncer.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       future: _profile,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const LoadingPage();
+          return const LoadingIndicator();
         }
 
         final data = snapshot.data;

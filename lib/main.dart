@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:senor/loading_page.dart';
-import './login_page.dart';
-import './home_page.dart';
+import 'package:senor/ui/loading_indicator.dart';
+import 'package:senor/login_page.dart';
+import 'package:senor/home_page.dart';
 
 void main() => runApp(App());
 
@@ -49,7 +48,7 @@ class AppHome extends StatelessWidget {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingPage();
+            return const LoadingIndicator();
           }
 
           if (snapshot.hasData) {

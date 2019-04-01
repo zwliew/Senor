@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:senor/my_chats_page.dart';
-import './discover_page.dart';
-import './my_profile_page.dart';
+import 'package:senor/discover_page.dart';
+import 'package:senor/my_profile_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

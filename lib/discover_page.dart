@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import './user_icon.dart';
+import 'package:senor/ui/user_icon.dart';
 
 class DiscoverPage extends StatelessWidget {
   @override

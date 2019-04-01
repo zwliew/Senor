@@ -44,6 +44,9 @@ class LoginPage extends StatelessWidget {
         'leadershipPositions': '',
         'coursesPursued': '',
         'highSchoolAttended': '',
+        'gender': '',
+        'race': '',
+        'religion': '',
       });
     });
   }
