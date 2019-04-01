@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Widget _buildSelectedPageWidget() {
+  _buildSelectedPageWidget() {
     switch (_selectedIdx) {
       case _discoverIdx:
         return DiscoverPage();
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Text _buildPageTitle() {
+  _buildPageTitleWidget() {
     String title;
     switch (_selectedIdx) {
       case _discoverIdx:
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _buildPageTitle(),
+        title: _buildPageTitleWidget(),
       ),
       body: _buildSelectedPageWidget(),
       bottomNavigationBar: BottomNavigationBar(
@@ -81,7 +81,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIdx,
-        fixedColor: Colors.blue,
         onTap: _handleNavigationItemTap,
       ),
     );

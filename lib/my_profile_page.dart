@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senor/ui/loading_indicator.dart';
+import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/debouncer.dart';
 import 'package:senor/util/profile.dart';
@@ -14,18 +15,18 @@ class MyProfilePage extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: _MyProfilePageDetails(),
+        child: _PageDetails(),
       ),
     );
   }
 }
 
-class _MyProfilePageDetails extends StatefulWidget {
+class _PageDetails extends StatefulWidget {
   @override
-  _MyProfilePageDetailsState createState() => _MyProfilePageDetailsState();
+  _PageDetailsState createState() => _PageDetailsState();
 }
 
-class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
+class _PageDetailsState extends State<_PageDetails> {
   Future<Map<String, dynamic>> _profile;
   DocumentReference _ref;
 
@@ -41,35 +42,6 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
     _ref = Firestore.instance.collection('users').document(user.uid);
     final snapshot = await _ref.get();
     return snapshot.data;
-  }
-
-  _buildTextFieldWidget({String label, IconData icon, String field}) {
-    return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
-      title: MyProfileTextField(
-        label: label,
-        icon: icon,
-        ref: _ref,
-        field: field,
-      ),
-    );
-  }
-
-  _buildDropDownWidget({String field, List<String> values}) {
-    return Column(
-      children: [
-        MyProfileDropDownButton(
-          ref: _ref,
-          field: field,
-          values: values,
-        ),
-        Opacity(
-          opacity: 0.8,
-          child: Text(field.toUpperCase()),
-        ),
-      ],
-    );
   }
 
   @override
@@ -103,11 +75,11 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: data['reputation'].toString(),
                     desc: 'REP',
                   ),
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: buildProfileDateString(data['creationTimestamp']),
                     desc: 'JOINED',
                   ),
@@ -127,7 +99,8 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildDropDownWidget(
+                  _DropDownListItem(
+                    ref: _ref,
                     field: 'gender',
                     values: const [
                       'Male',
@@ -135,7 +108,8 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
                       'Others',
                     ],
                   ),
-                  _buildDropDownWidget(
+                  _DropDownListItem(
+                    ref: _ref,
                     field: 'religion',
                     values: const [
                       'Buddhist',
@@ -148,7 +122,8 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
                       'Others',
                     ],
                   ),
-                  _buildDropDownWidget(
+                  _DropDownListItem(
+                    ref: _ref,
                     field: 'race',
                     values: const [
                       'Chinese',
@@ -164,10 +139,11 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
                 ],
               ),
             ),
-            _buildTextFieldWidget(
+            _TextFieldListItem(
               field: 'describeMyself',
               label: 'Describe Myself',
               icon: Icons.person_outline,
+              ref: _ref,
             ),
             const Divider(),
             Text(
@@ -181,30 +157,35 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Column(
                 children: [
-                  _buildTextFieldWidget(
+                  _TextFieldListItem(
                     field: 'universityAttended',
                     label: 'University attended',
                     icon: Icons.account_balance,
+                    ref: _ref,
                   ),
-                  _buildTextFieldWidget(
+                  _TextFieldListItem(
                     field: 'coursesPursued',
                     label: 'Courses pursued',
                     icon: Icons.book,
+                    ref: _ref,
                   ),
-                  _buildTextFieldWidget(
+                  _TextFieldListItem(
                     field: 'highSchoolAttended',
                     label: 'High school attended',
                     icon: Icons.account_balance,
+                    ref: _ref,
                   ),
-                  _buildTextFieldWidget(
+                  _TextFieldListItem(
                     field: 'extracurricularsTaken',
                     label: 'Extracurriculars taken',
                     icon: Icons.golf_course,
+                    ref: _ref,
                   ),
-                  _buildTextFieldWidget(
+                  _TextFieldListItem(
                     field: 'leadershipPositions',
                     label: 'Leadership positions',
                     icon: Icons.people,
+                    ref: _ref,
                   ),
                 ],
               ),
@@ -216,12 +197,71 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
   }
 }
 
-class MyProfileDropDownButton extends StatelessWidget {
+class _DropDownListItem extends StatelessWidget {
+  final String field;
+  final List<String> values;
+  final DocumentReference ref;
+
+  const _DropDownListItem({
+    Key key,
+    @required this.field,
+    @required this.values,
+    @required this.ref,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _DropDownButton(
+          ref: ref,
+          field: field,
+          values: values,
+        ),
+        Opacity(
+          opacity: 0.8,
+          child: Text(field.toUpperCase()),
+        ),
+      ],
+    );
+  }
+}
+
+class _TextFieldListItem extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String field;
+  final DocumentReference ref;
+
+  const _TextFieldListItem({
+    Key key,
+    @required this.label,
+    @required this.icon,
+    @required this.field,
+    @required this.ref,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+      title: _TextField(
+        label: label,
+        icon: icon,
+        ref: ref,
+        field: field,
+      ),
+    );
+  }
+}
+
+class _DropDownButton extends StatelessWidget {
   final String field;
   final DocumentReference ref;
   final List<String> values;
 
-  const MyProfileDropDownButton({
+  const _DropDownButton({
     Key key,
     @required this.field,
     @required this.ref,
@@ -260,13 +300,13 @@ class MyProfileDropDownButton extends StatelessWidget {
   }
 }
 
-class MyProfileTextField extends StatefulWidget {
+class _TextField extends StatefulWidget {
   final String label;
   final IconData icon;
   final DocumentReference ref;
   final String field;
 
-  const MyProfileTextField({
+  const _TextField({
     Key key,
     @required this.label,
     @required this.icon,
@@ -275,10 +315,10 @@ class MyProfileTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MyProfileTextFieldState createState() => _MyProfileTextFieldState();
+  _TextFieldState createState() => _TextFieldState();
 }
 
-class _MyProfileTextFieldState extends State<MyProfileTextField> {
+class _TextFieldState extends State<_TextField> {
   // Delay in milliseconds after a text change to be sure
   // that the user is not currently typing
   static const _textEditDelayMs = 750;

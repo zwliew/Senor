@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:senor/ui/loading_indicator.dart';
+import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/profile.dart';
 
@@ -107,11 +108,11 @@ class _ProfileRouteDetails extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: data['reputation'].toString(),
                     desc: 'REP',
                   ),
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: buildProfileDateString(data['creationTimestamp']),
                     desc: 'JOINED',
                   ),
@@ -123,15 +124,15 @@ class _ProfileRouteDetails extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: data['gender'],
                     desc: 'GENDER',
                   ),
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: data['race'],
                     desc: 'RACE',
                   ),
-                  buildProfileTidbitWidget(
+                  ProfileTidbit(
                     data: data['religion'],
                     desc: 'RELIGION',
                   )
