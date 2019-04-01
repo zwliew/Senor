@@ -51,6 +51,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
   }
 
+  _buildDropDownWidget({String field, List<String> values}) {
+    return Column(
+      children: [
+        MyProfileDropDownButton(
+          ref: _ref,
+          field: field,
+          values: values,
+        ),
+        Opacity(
+          opacity: 0.8,
+          child: Text(field.toUpperCase()),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -112,6 +128,45 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildDropDownWidget(
+                      field: 'gender',
+                      values: const [
+                        'Male',
+                        'Female',
+                        'Others',
+                      ],
+                    ),
+                    _buildDropDownWidget(
+                      field: 'religion',
+                      values: const [
+                        'Buddhist',
+                        'Christian',
+                        'Free thinker',
+                        'Hindu',
+                        'Islam',
+                        'Roman Catholic',
+                        'Sikh',
+                        'Others',
+                      ],
+                    ),
+                    _buildDropDownWidget(
+                      field: 'race',
+                      values: const [
+                        'Chinese',
+                        'Malay',
+                        'Indian',
+                        'Eurasian',
+                        'Hispanic',
+                        'Caucasian',
+                        'African',
+                        'Others',
+                      ],
+                    ),
+                  ],
+                ),
                 Column(
                   children: [
                     const Divider(),
@@ -154,6 +209,50 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class MyProfileDropDownButton extends StatelessWidget {
+  final String field;
+  final DocumentReference ref;
+  final List<String> values;
+
+  const MyProfileDropDownButton({
+    Key key,
+    @required this.field,
+    @required this.ref,
+    @required this.values,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: ref.snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const LoadingIndicator();
+        }
+
+        return DropdownButton(
+          value: snapshot.data[field],
+          onChanged: (value) {
+            Firestore.instance.runTransaction((tx) async {
+              await tx.update(ref, {
+                field: value,
+              });
+            });
+          },
+          items: values
+              .map(
+                (el) => DropdownMenuItem(
+                      value: el,
+                      child: Text(el),
+                    ),
+              )
+              .toList(),
         );
       },
     );

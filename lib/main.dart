@@ -45,16 +45,17 @@ class AppHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseAuth.instance.onAuthStateChanged,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingIndicator();
-          }
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingIndicator();
+        }
 
-          if (snapshot.hasData) {
-            return HomePage();
-          }
-          return LoginPage(title: title);
-        });
+        if (snapshot.hasData) {
+          return HomePage();
+        }
+        return LoginPage(title: title);
+      },
+    );
   }
 }
