@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/user_icon.dart';
+import 'package:senor/util/profile.dart';
 
 class DiscoverPage extends StatelessWidget {
   @override
@@ -24,7 +26,7 @@ class DiscoverPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileRoute(uid: doc.documentID),
+                      builder: (context) => _ProfileRoute(uid: doc.documentID),
                     ),
                   );
                 },
@@ -41,18 +43,31 @@ class DiscoverPage extends StatelessWidget {
   }
 }
 
-class ProfileRoute extends StatelessWidget {
+class _ProfileRoute extends StatelessWidget {
+  final String uid;
+
+  _ProfileRoute({Key key, @required this.uid}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('User Profile'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _ProfileRouteDetails(uid: uid),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileRouteDetails extends StatelessWidget {
   final uid;
 
-  const ProfileRoute({Key key, @required this.uid}) : super(key: key);
-
-  _buildJoinedString(ms) {
-    final date = DateTime.fromMillisecondsSinceEpoch(
-      ms,
-      isUtc: true,
-    );
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
-  }
+  _ProfileRouteDetails({Key key, @required this.uid}) : super(key: key);
 
   _contactUser() {
     // TODO: Add a method of contacting a user
@@ -63,83 +78,72 @@ class ProfileRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Profile'),
-      ),
-      body: StreamBuilder(
-        stream:
-            Firestore.instance.collection('users').document(uid).snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: const CircularProgressIndicator(),
-            );
-          }
+    return StreamBuilder(
+      stream: Firestore.instance.collection('users').document(uid).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const LoadingIndicator();
+        }
 
-          final data = snapshot.data;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UserIcon(
-                    radius: 48,
-                    photoUrl: data['photoUrl'],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    data['displayName'],
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        final data = snapshot.data;
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: UserIcon(
+                radius: 48,
+                photoUrl: data['photoUrl'],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                data['displayName'],
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            data['reputation'].toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Opacity(
-                            opacity: 0.8,
-                            child: const Text('REP'),
-                          ),
-                        ],
+                      Text(
+                        data['reputation'].toString(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            _buildJoinedString(data['creationTimestamp']),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Opacity(
-                            opacity: 0.8,
-                            child: const Text('JOINED'),
-                          ),
-                        ],
+                      const Opacity(
+                        opacity: 0.8,
+                        child: const Text('REP'),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RaisedButton(
-                    onPressed: _contactUser,
-                    child: const Text('Contact Me'),
+                  Column(
+                    children: [
+                      Text(
+                        buildProfileDateString(data['creationTimestamp']),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Opacity(
+                        opacity: 0.8,
+                        child: const Text('JOINED'),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          );
-        },
-      ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                onPressed: _contactUser,
+                child: const Text('Contact Me'),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -6,13 +6,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/debouncer.dart';
+import 'package:senor/util/profile.dart';
 
-class MyProfilePage extends StatefulWidget {
+class MyProfilePage extends StatelessWidget {
   @override
-  _MyProfilePageState createState() => _MyProfilePageState();
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _MyProfilePageDetails(),
+      ),
+    );
+  }
 }
 
-class _MyProfilePageState extends State<MyProfilePage> {
+class _MyProfilePageDetails extends StatefulWidget {
+  @override
+  _MyProfilePageDetailsState createState() => _MyProfilePageDetailsState();
+}
+
+class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
   Future<Map<String, dynamic>> _profile;
   DocumentReference _ref;
 
@@ -28,14 +41,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
     _ref = Firestore.instance.collection('users').document(user.uid);
     final snapshot = await _ref.get();
     return snapshot.data;
-  }
-
-  _buildJoinedString(ms) {
-    final date = DateTime.fromMillisecondsSinceEpoch(
-      ms,
-      isUtc: true,
-    );
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
   }
 
   _buildTextFieldWidget({String label, IconData icon, String field}) {
@@ -77,149 +82,144 @@ class _MyProfilePageState extends State<MyProfilePage> {
         }
 
         final data = snapshot.data;
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UserIcon(
-                    radius: 48,
-                    photoUrl: data['photoUrl'],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    data['displayName'],
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            data['reputation'].toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Opacity(
-                            opacity: 0.8,
-                            child: Text('REP'),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            _buildJoinedString(data['creationTimestamp']),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Opacity(
-                            opacity: 0.8,
-                            child: const Text('JOINED'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                const Text(
-                  'About myself',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildDropDownWidget(
-                        field: 'gender',
-                        values: const [
-                          'Male',
-                          'Female',
-                          'Others',
-                        ],
-                      ),
-                      _buildDropDownWidget(
-                        field: 'religion',
-                        values: const [
-                          'Buddhist',
-                          'Christian',
-                          'Free thinker',
-                          'Hindu',
-                          'Islam',
-                          'Roman Catholic',
-                          'Sikh',
-                          'Others',
-                        ],
-                      ),
-                      _buildDropDownWidget(
-                        field: 'race',
-                        values: const [
-                          'Chinese',
-                          'Malay',
-                          'Indian',
-                          'Eurasian',
-                          'Hispanic',
-                          'Caucasian',
-                          'African',
-                          'Others',
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                _buildTextFieldWidget(
-                  field: 'describeMyself',
-                  label: 'Describe Myself',
-                  icon: Icons.person_outline,
-                ),
-                const Divider(),
-                const Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: const Text(
-                    'Education background',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                _buildTextFieldWidget(
-                  field: 'universityAttended',
-                  label: 'University attended',
-                  icon: Icons.account_balance,
-                ),
-                _buildTextFieldWidget(
-                  field: 'coursesPursued',
-                  label: 'Courses pursued',
-                  icon: Icons.book,
-                ),
-                _buildTextFieldWidget(
-                  field: 'highSchoolAttended',
-                  label: 'High school attended',
-                  icon: Icons.account_balance,
-                ),
-                _buildTextFieldWidget(
-                  field: 'extracurricularsTaken',
-                  label: 'Extracurriculars taken',
-                  icon: Icons.golf_course,
-                ),
-                _buildTextFieldWidget(
-                  field: 'leadershipPositions',
-                  label: 'Leadership positions',
-                  icon: Icons.people,
-                ),
-              ],
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: UserIcon(
+                radius: 48,
+                photoUrl: data['photoUrl'],
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                data['displayName'],
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        data['reputation'].toString(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Opacity(
+                        opacity: 0.8,
+                        child: Text('REP'),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        buildProfileDateString(data['creationTimestamp']),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Opacity(
+                        opacity: 0.8,
+                        child: const Text('JOINED'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            const Text(
+              'About myself',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildDropDownWidget(
+                    field: 'gender',
+                    values: const [
+                      'Male',
+                      'Female',
+                      'Others',
+                    ],
+                  ),
+                  _buildDropDownWidget(
+                    field: 'religion',
+                    values: const [
+                      'Buddhist',
+                      'Christian',
+                      'Free thinker',
+                      'Hindu',
+                      'Islam',
+                      'Roman Catholic',
+                      'Sikh',
+                      'Others',
+                    ],
+                  ),
+                  _buildDropDownWidget(
+                    field: 'race',
+                    values: const [
+                      'Chinese',
+                      'Malay',
+                      'Indian',
+                      'Eurasian',
+                      'Hispanic',
+                      'Caucasian',
+                      'African',
+                      'Others',
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            _buildTextFieldWidget(
+              field: 'describeMyself',
+              label: 'Describe Myself',
+              icon: Icons.person_outline,
+            ),
+            const Divider(),
+            const Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: const Text(
+                'Education background',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            _buildTextFieldWidget(
+              field: 'universityAttended',
+              label: 'University attended',
+              icon: Icons.account_balance,
+            ),
+            _buildTextFieldWidget(
+              field: 'coursesPursued',
+              label: 'Courses pursued',
+              icon: Icons.book,
+            ),
+            _buildTextFieldWidget(
+              field: 'highSchoolAttended',
+              label: 'High school attended',
+              icon: Icons.account_balance,
+            ),
+            _buildTextFieldWidget(
+              field: 'extracurricularsTaken',
+              label: 'Extracurriculars taken',
+              icon: Icons.golf_course,
+            ),
+            _buildTextFieldWidget(
+              field: 'leadershipPositions',
+              label: 'Leadership positions',
+              icon: Icons.people,
+            ),
+          ],
         );
       },
     );
