@@ -41,6 +41,9 @@ class LoginPage extends StatelessWidget {
         'isAdmin': false,
         'extracurricularsTaken': '',
         'universityAttended': '',
+        'leadershipPositions': '',
+        'coursesPursued': '',
+        'highSchoolAttended': '',
       });
     });
   }
