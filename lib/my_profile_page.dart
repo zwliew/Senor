@@ -128,83 +128,94 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildDropDownWidget(
-                      field: 'gender',
-                      values: const [
-                        'Male',
-                        'Female',
-                        'Others',
-                      ],
-                    ),
-                    _buildDropDownWidget(
-                      field: 'religion',
-                      values: const [
-                        'Buddhist',
-                        'Christian',
-                        'Free thinker',
-                        'Hindu',
-                        'Islam',
-                        'Roman Catholic',
-                        'Sikh',
-                        'Others',
-                      ],
-                    ),
-                    _buildDropDownWidget(
-                      field: 'race',
-                      values: const [
-                        'Chinese',
-                        'Malay',
-                        'Indian',
-                        'Eurasian',
-                        'Hispanic',
-                        'Caucasian',
-                        'African',
-                        'Others',
-                      ],
-                    ),
-                  ],
+                const Divider(),
+                const Text(
+                  'About myself',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                Column(
-                  children: [
-                    const Divider(),
-                    const Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: const Text(
-                        'Education background',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildDropDownWidget(
+                        field: 'gender',
+                        values: const [
+                          'Male',
+                          'Female',
+                          'Others',
+                        ],
                       ),
+                      _buildDropDownWidget(
+                        field: 'religion',
+                        values: const [
+                          'Buddhist',
+                          'Christian',
+                          'Free thinker',
+                          'Hindu',
+                          'Islam',
+                          'Roman Catholic',
+                          'Sikh',
+                          'Others',
+                        ],
+                      ),
+                      _buildDropDownWidget(
+                        field: 'race',
+                        values: const [
+                          'Chinese',
+                          'Malay',
+                          'Indian',
+                          'Eurasian',
+                          'Hispanic',
+                          'Caucasian',
+                          'African',
+                          'Others',
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                _buildTextFieldWidget(
+                  field: 'describeMyself',
+                  label: 'Describe Myself',
+                  icon: Icons.person_outline,
+                ),
+                const Divider(),
+                const Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: const Text(
+                    'Education background',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
-                    _buildTextFieldWidget(
-                      field: 'universityAttended',
-                      label: 'University Attended',
-                      icon: Icons.account_balance,
-                    ),
-                    _buildTextFieldWidget(
-                      field: 'coursesPursued',
-                      label: 'Courses pursued',
-                      icon: Icons.book,
-                    ),
-                    _buildTextFieldWidget(
-                      field: 'highSchoolAttended',
-                      label: 'High school attended',
-                      icon: Icons.account_balance,
-                    ),
-                    _buildTextFieldWidget(
-                      field: 'extracurricularsTaken',
-                      label: 'Extracurriculars taken',
-                      icon: Icons.golf_course,
-                    ),
-                    _buildTextFieldWidget(
-                      field: 'leadershipPositions',
-                      label: 'Leadership positions',
-                      icon: Icons.people,
-                    ),
-                  ],
+                  ),
+                ),
+                _buildTextFieldWidget(
+                  field: 'universityAttended',
+                  label: 'University attended',
+                  icon: Icons.account_balance,
+                ),
+                _buildTextFieldWidget(
+                  field: 'coursesPursued',
+                  label: 'Courses pursued',
+                  icon: Icons.book,
+                ),
+                _buildTextFieldWidget(
+                  field: 'highSchoolAttended',
+                  label: 'High school attended',
+                  icon: Icons.account_balance,
+                ),
+                _buildTextFieldWidget(
+                  field: 'extracurricularsTaken',
+                  label: 'Extracurriculars taken',
+                  icon: Icons.golf_course,
+                ),
+                _buildTextFieldWidget(
+                  field: 'leadershipPositions',
+                  label: 'Leadership positions',
+                  icon: Icons.people,
                 ),
               ],
             ),
