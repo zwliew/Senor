@@ -113,6 +113,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Column(
                 children: [
+                  const Divider(),
+                  const Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: const Text(
+                      'Education background',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   _buildTextFieldWidget(
                     field: 'universityAttended',
                     label: 'University Attended',
