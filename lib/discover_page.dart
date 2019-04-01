@@ -36,6 +36,7 @@ class DiscoverPage extends StatelessWidget {
                     photoUrl: doc['photoUrl'],
                   ),
                   title: Text(doc['displayName']),
+                  subtitle: Text(doc['describeMyself']),
                 ),
               );
             });
