@@ -6,6 +6,8 @@ import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/profile.dart';
 
 class DiscoverPage extends StatelessWidget {
+  const DiscoverPage({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -48,7 +50,7 @@ class DiscoverPage extends StatelessWidget {
 class _ProfileRoute extends StatelessWidget {
   final String uid;
 
-  _ProfileRoute({Key key, @required this.uid}) : super(key: key);
+  const _ProfileRoute({Key key, @required this.uid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +71,7 @@ class _ProfileRoute extends StatelessWidget {
 class _ProfileRouteDetails extends StatelessWidget {
   final uid;
 
-  _ProfileRouteDetails({Key key, @required this.uid}) : super(key: key);
+  const _ProfileRouteDetails({Key key, @required this.uid}) : super(key: key);
 
   _contactUser() {
     // TODO: Add a method of contacting a user

@@ -32,12 +32,12 @@ class _HomePageState extends State<HomePage> {
   _buildSelectedPageWidget() {
     switch (_selectedIdx) {
       case _discoverIdx:
-        return DiscoverPage();
+        return const DiscoverPage();
       case _profileIdx:
-        return MyProfilePage();
+        return const MyProfilePage();
       case _chatsIdx:
       default:
-        return MyChatsPage();
+        return const MyChatsPage();
     }
   }
 

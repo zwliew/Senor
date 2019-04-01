@@ -10,6 +10,8 @@ import 'package:senor/util/debouncer.dart';
 import 'package:senor/util/profile.dart';
 
 class MyProfilePage extends StatelessWidget {
+  const MyProfilePage({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
