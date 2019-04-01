@@ -85,47 +85,31 @@ class _MyProfilePageDetailsState extends State<_MyProfilePageDetails> {
         return Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: UserIcon(
                 radius: 48,
                 photoUrl: data['photoUrl'],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 data['displayName'],
                 style: const TextStyle(fontSize: 20),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        data['reputation'].toString(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Opacity(
-                        opacity: 0.8,
-                        child: Text('REP'),
-                      ),
-                    ],
+                  buildProfileTidbitWidget(
+                    data: data['reputation'].toString(),
+                    desc: 'REP',
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        buildProfileDateString(data['creationTimestamp']),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Opacity(
-                        opacity: 0.8,
-                        child: const Text('JOINED'),
-                      ),
-                    ],
+                  buildProfileTidbitWidget(
+                    data: buildProfileDateString(data['creationTimestamp']),
+                    desc: 'JOINED',
                   ),
                 ],
               ),
