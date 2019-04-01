@@ -38,6 +38,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
   }
 
+  _buildTextFieldWidget({String label, IconData icon, String field}) {
+    return ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+      title: MyProfileTextField(
+        label: label,
+        icon: icon,
+        ref: _ref,
+        field: field,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -100,25 +113,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Column(
                 children: [
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 2.0, horizontal: 16.0),
-                    title: MyProfileTextField(
-                      label: 'University attended',
-                      icon: Icons.account_balance,
-                      ref: _ref,
-                      field: 'universityAttended',
-                    ),
+                  _buildTextFieldWidget(
+                    field: 'universityAttended',
+                    label: 'University Attended',
+                    icon: Icons.account_balance,
                   ),
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 2.0, horizontal: 16.0),
-                    title: MyProfileTextField(
-                      label: 'Extracurriculars taken',
-                      icon: Icons.golf_course,
-                      ref: _ref,
-                      field: 'extracurricularsTaken',
-                    ),
+                  _buildTextFieldWidget(
+                    field: 'coursesPursued',
+                    label: 'Courses pursued',
+                    icon: Icons.book,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'highSchoolAttended',
+                    label: 'High school attended',
+                    icon: Icons.account_balance,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'extracurricularsTaken',
+                    label: 'Extracurriculars taken',
+                    icon: Icons.golf_course,
+                  ),
+                  _buildTextFieldWidget(
+                    field: 'leadershipPositions',
+                    label: 'Leadership positions',
+                    icon: Icons.people,
                   ),
                 ],
               ),
