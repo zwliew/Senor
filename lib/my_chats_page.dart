@@ -4,22 +4,22 @@ class MyChatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: Implement the MyChatsPage
-    return Opacity(
-      opacity: 0.7,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Icon(
-                Icons.flight_land,
-                size: 48.0,
-              ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.flight_land,
+              size: 48.0,
             ),
-            const Text('Arriving soon'),
-          ],
-        ),
+          ),
+          Text(
+            'Arriving soon',
+            style: Theme.of(context).textTheme.body2,
+          ),
+        ],
       ),
     );
   }

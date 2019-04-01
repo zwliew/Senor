@@ -67,7 +67,7 @@ class _PageDetailsState extends State<_PageDetails> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 data['displayName'],
-                style: const TextStyle(fontSize: 20),
+                style: Theme.of(context).textTheme.headline,
               ),
             ),
             Padding(
@@ -89,10 +89,9 @@ class _PageDetailsState extends State<_PageDetails> {
             const Divider(),
             Text(
               'About myself',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
+              style: Theme.of(context).textTheme.body2.apply(
+                    color: Theme.of(context).primaryColor,
+                  ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -148,10 +147,9 @@ class _PageDetailsState extends State<_PageDetails> {
             const Divider(),
             Text(
               'Education background',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
+              style: Theme.of(context).textTheme.body2.apply(
+                    color: Theme.of(context).primaryColor,
+                  ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -218,9 +216,9 @@ class _DropDownListItem extends StatelessWidget {
           field: field,
           values: values,
         ),
-        Opacity(
-          opacity: 0.8,
-          child: Text(field.toUpperCase()),
+        Text(
+          field.toUpperCase(),
+          style: Theme.of(context).textTheme.caption,
         ),
       ],
     );

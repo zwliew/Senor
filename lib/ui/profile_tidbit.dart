@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 class ProfileTidbit extends StatelessWidget {
   final String data;
@@ -16,11 +16,11 @@ class ProfileTidbit extends StatelessWidget {
       children: [
         Text(
           data,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.body2,
         ),
-        Opacity(
-          opacity: 0.8,
-          child: Text(desc),
+        Text(
+          desc,
+          style: Theme.of(context).textTheme.caption,
         ),
       ],
     );

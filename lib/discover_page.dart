@@ -98,9 +98,17 @@ class _ProfileRouteDetails extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                data['displayName'],
-                style: const TextStyle(fontSize: 20),
+              child: Column(
+                children: [
+                  Text(
+                    data['displayName'],
+                    style: Theme.of(context).textTheme.headline,
+                  ),
+                  Text(
+                    data['describeMyself'],
+                    style: Theme.of(context).textTheme.subtitle,
+                  ),
+                ],
               ),
             ),
             Padding(
