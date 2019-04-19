@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:senor/chat_page.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
+import 'package:senor/util/database.dart';
 import 'package:senor/util/profile.dart';
 
 class DiscoverPage extends StatelessWidget {
@@ -21,27 +24,31 @@ class DiscoverPage extends StatelessWidget {
 
         final docs = snapshot.data.documents;
         return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final doc = docs[index];
-              return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => _ProfileRoute(uid: doc.documentID),
-                    ),
-                  );
-                },
-                child: ListTile(
-                  leading: UserIcon(
-                    photoUrl: doc['photoUrl'],
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final doc = docs[index];
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => _ProfileRoute(uid: doc.documentID),
                   ),
-                  title: Text(doc['displayName']),
-                  subtitle: Text(doc['describeMyself']),
+                );
+              },
+              child: ListTile(
+                leading: UserIcon(
+                  photoUrl: doc['photoUrl'],
+                  displayName: parseUserDisplayName(doc),
                 ),
-              );
-            });
+                title: Text(
+                  parseUserDisplayName(doc),
+                ),
+                subtitle: Text(parseUserDescription(doc)),
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -69,15 +76,26 @@ class _ProfileRoute extends StatelessWidget {
 }
 
 class _ProfileRouteDetails extends StatelessWidget {
-  final uid;
+  final String uid;
 
   const _ProfileRouteDetails({Key key, @required this.uid}) : super(key: key);
 
-  _contactUser() {
-    // TODO: Add a method of contacting a user
+  _contactUser({BuildContext context, String toDisplayName}) async {
+    // TODO: Add an alternative method of contacting a user
     // This could be a built-in messaging platform,
     // or a user-defined mode of communication.
     // Examples include WhatsApp, Facebook, Instagram.
+    final curUser = await FirebaseAuth.instance.currentUser();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+              fromUid: curUser.uid,
+              toUid: uid,
+              toDisplayName: toDisplayName,
+            ),
+      ),
+    );
   }
 
   @override
@@ -97,6 +115,7 @@ class _ProfileRouteDetails extends StatelessWidget {
               child: UserIcon(
                 radius: 48,
                 photoUrl: data['photoUrl'],
+                displayName: parseUserDisplayName(data),
               ),
             ),
             Padding(
@@ -104,11 +123,11 @@ class _ProfileRouteDetails extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    data['displayName'],
+                    parseUserDisplayName(data),
                     style: Theme.of(context).textTheme.headline,
                   ),
                   Text(
-                    data['describeMyself'],
+                    parseUserDescription(data),
                     style: Theme.of(context).textTheme.subtitle,
                   ),
                 ],
@@ -120,11 +139,13 @@ class _ProfileRouteDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfileTidbit(
-                    data: data['reputation'].toString(),
+                    data: parseUserReputation(data).toString(),
                     desc: 'REP',
                   ),
                   ProfileTidbit(
-                    data: buildProfileDateString(data['creationTimestamp']),
+                    data: buildProfileDateString(
+                      parseUserCreationTimestamp(data),
+                    ),
                     desc: 'JOINED',
                   ),
                 ],
@@ -136,15 +157,15 @@ class _ProfileRouteDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfileTidbit(
-                    data: data['gender'],
+                    data: parseUserGender(data),
                     desc: 'GENDER',
                   ),
                   ProfileTidbit(
-                    data: data['race'],
+                    data: parseUserRace(data),
                     desc: 'RACE',
                   ),
                   ProfileTidbit(
-                    data: data['religion'],
+                    data: parseUserReligion(data),
                     desc: 'RELIGION',
                   )
                 ],
@@ -153,7 +174,10 @@ class _ProfileRouteDetails extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
-                onPressed: _contactUser,
+                onPressed: () => _contactUser(
+                      context: context,
+                      toDisplayName: parseUserDisplayName(data),
+                    ),
                 child: const Text('Contact Me'),
               ),
             ),

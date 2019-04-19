@@ -15,7 +15,7 @@ class ProfileTidbit extends StatelessWidget {
     return Column(
       children: [
         Text(
-          data,
+          data ?? '',
           style: Theme.of(context).textTheme.body2,
         ),
         Text(

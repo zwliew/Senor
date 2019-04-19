@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
+import 'package:senor/util/database.dart';
 import 'package:senor/util/debouncer.dart';
 import 'package:senor/util/profile.dart';
 
@@ -68,7 +69,7 @@ class _PageDetailsState extends State<_PageDetails> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                data['displayName'],
+                parseUserDisplayName(data),
                 style: Theme.of(context).textTheme.headline,
               ),
             ),
@@ -78,11 +79,13 @@ class _PageDetailsState extends State<_PageDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfileTidbit(
-                    data: data['reputation'].toString(),
+                    data: parseUserReputation(data).toString(),
                     desc: 'REP',
                   ),
                   ProfileTidbit(
-                    data: buildProfileDateString(data['creationTimestamp']),
+                    data: buildProfileDateString(
+                      parseUserCreationTimestamp(data),
+                    ),
                     desc: 'JOINED',
                   ),
                 ],

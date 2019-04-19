@@ -7,8 +7,12 @@ class UserIcon extends StatelessWidget {
   final String photoUrl;
   final double radius;
 
-  const UserIcon({Key key, this.displayName, this.photoUrl, this.radius = 20})
-      : super(key: key);
+  const UserIcon({
+    Key key,
+    this.displayName,
+    this.photoUrl,
+    this.radius = 20,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
