@@ -1,12 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:senor/my_chats_page.dart';
 import 'package:senor/discover_page.dart';
 import 'package:senor/my_profile_page.dart';
+import 'package:senor/ui/user_icon.dart';
 
 class HomePage extends StatefulWidget {
+  final FirebaseUser user;
+
+  const HomePage({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
+
+enum _PopupMenuOptions { logout }
 
 class _HomePageState extends State<HomePage> {
   static const _chatsIdx = 0;
@@ -32,12 +43,12 @@ class _HomePageState extends State<HomePage> {
   _buildSelectedPageWidget() {
     switch (_selectedIdx) {
       case _discoverIdx:
-        return const DiscoverPage();
+        return DiscoverPage(curUid: widget.user.uid);
       case _profileIdx:
-        return const MyProfilePage();
+        return MyProfilePage(uid: widget.user.uid);
       case _chatsIdx:
       default:
-        return const MyChatsPage();
+        return MyChatsPage(uid: widget.user.uid);
     }
   }
 
@@ -63,6 +74,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: _buildPageTitleWidget(),
+        actions: [
+          PopupMenuButton(
+            icon: Icon(Icons.person),
+            tooltip: 'Profile settings',
+            onSelected: (result) {
+              switch (result) {
+                case _PopupMenuOptions.logout:
+                  FirebaseAuth.instance.signOut();
+                  break;
+                default:
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: _PopupMenuOptions.logout,
+                    child: const Text('Log out'),
+                  ),
+                ],
+          )
+        ],
       ),
       body: _buildSelectedPageWidget(),
       bottomNavigationBar: BottomNavigationBar(

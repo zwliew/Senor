@@ -26,7 +26,7 @@ class LoginPage extends StatelessWidget {
     final user = await FirebaseAuth.instance.signInWithCredential(credential);
 
     // If the user is new, store initial user data in Cloud Firestore
-    final userRef = Firestore.instance.collection('users').document(user.uid);
+    final userRef = Firestore.instance.document('users/${user.uid}');
     userRef.get().then((ds) {
       if (ds.exists) {
         return;

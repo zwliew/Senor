@@ -11,46 +11,50 @@ import 'package:senor/util/debouncer.dart';
 import 'package:senor/util/profile.dart';
 
 class MyProfilePage extends StatelessWidget {
-  const MyProfilePage({Key key}) : super(key: key);
+  final String uid;
+
+  const MyProfilePage({
+    Key key,
+    @required this.uid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: _PageDetails(),
+        child: _PageDetails(uid: uid),
       ),
     );
   }
 }
 
 class _PageDetails extends StatefulWidget {
+  final String uid;
+
+  const _PageDetails({
+    Key key,
+    @required this.uid,
+  }) : super(key: key);
+
   @override
   _PageDetailsState createState() => _PageDetailsState();
 }
 
 class _PageDetailsState extends State<_PageDetails> {
-  Future<Map<String, dynamic>> _profile;
   DocumentReference _ref;
 
   @override
   void initState() {
     super.initState();
 
-    _profile = _fetchProfile();
-  }
-
-  Future<Map<String, dynamic>> _fetchProfile() async {
-    final user = await FirebaseAuth.instance.currentUser();
-    _ref = Firestore.instance.collection('users').document(user.uid);
-    final snapshot = await _ref.get();
-    return snapshot.data;
+    _ref = Firestore.instance.document('users/${widget.uid}');
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _profile,
+    return StreamBuilder(
+      stream: _ref.snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const LoadingIndicator();

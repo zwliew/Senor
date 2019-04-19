@@ -9,7 +9,12 @@ import 'package:senor/util/database.dart';
 import 'package:senor/util/profile.dart';
 
 class DiscoverPage extends StatelessWidget {
-  const DiscoverPage({Key key}) : super(key: key);
+  final String curUid;
+
+  const DiscoverPage({
+    Key key,
+    @required this.curUid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,25 +32,24 @@ class DiscoverPage extends StatelessWidget {
           itemCount: docs.length,
           itemBuilder: (context, index) {
             final doc = docs[index];
-            return InkWell(
+            return ListTile(
+              leading: UserIcon(
+                photoUrl: doc['photoUrl'],
+                displayName: parseUserDisplayName(doc),
+              ),
+              title: Text(
+                parseUserDisplayName(doc),
+              ),
+              subtitle: Text(parseUserDescription(doc)),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => _ProfileRoute(uid: doc.documentID),
+                    builder: (context) =>
+                        _ProfileRoute(curUid: curUid, uid: doc.documentID),
                   ),
                 );
               },
-              child: ListTile(
-                leading: UserIcon(
-                  photoUrl: doc['photoUrl'],
-                  displayName: parseUserDisplayName(doc),
-                ),
-                title: Text(
-                  parseUserDisplayName(doc),
-                ),
-                subtitle: Text(parseUserDescription(doc)),
-              ),
             );
           },
         );
@@ -55,9 +59,13 @@ class DiscoverPage extends StatelessWidget {
 }
 
 class _ProfileRoute extends StatelessWidget {
-  final String uid;
+  final String curUid, uid;
 
-  const _ProfileRoute({Key key, @required this.uid}) : super(key: key);
+  const _ProfileRoute({
+    Key key,
+    @required this.uid,
+    @required this.curUid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +76,7 @@ class _ProfileRoute extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _ProfileRouteDetails(uid: uid),
+          child: _ProfileRouteDetails(curUid: curUid, uid: uid),
         ),
       ),
     );
@@ -76,32 +84,25 @@ class _ProfileRoute extends StatelessWidget {
 }
 
 class _ProfileRouteDetails extends StatelessWidget {
-  final String uid;
+  final String curUid, uid;
 
-  const _ProfileRouteDetails({Key key, @required this.uid}) : super(key: key);
+  const _ProfileRouteDetails({
+    Key key,
+    @required this.uid,
+    @required this.curUid,
+  }) : super(key: key);
 
   _contactUser({BuildContext context, String toDisplayName}) async {
     // TODO: Add an alternative method of contacting a user
     // This could be a built-in messaging platform,
     // or a user-defined mode of communication.
     // Examples include WhatsApp, Facebook, Instagram.
-    final curUser = await FirebaseAuth.instance.currentUser();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatPage(
-              fromUid: curUser.uid,
-              toUid: uid,
-              toDisplayName: toDisplayName,
-            ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Firestore.instance.collection('users').document(uid).snapshots(),
+      stream: Firestore.instance.document('users/$uid').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const LoadingIndicator();

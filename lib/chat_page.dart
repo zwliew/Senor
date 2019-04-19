@@ -1,23 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
-  final String fromUid, toUid, toDisplayName;
+  final String chatId;
 
   const ChatPage({
     Key key,
-    @required this.fromUid,
-    @required this.toUid,
-    @required this.toDisplayName,
+    @required this.chatId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(toDisplayName),
+        title: Text('Chat Page'),
       ),
-      body: ListView(),
+      // TODO
+      body: Container(),
     );
   }
 }

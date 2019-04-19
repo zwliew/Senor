@@ -42,8 +42,9 @@ class _AppHome extends StatelessWidget {
           return const LoadingIndicator();
         }
 
+        final user = snapshot.data;
         if (snapshot.hasData) {
-          return HomePage();
+          return HomePage(user: user);
         }
         return LoginPage(title: title);
       },
