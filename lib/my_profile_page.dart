@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:senor/model/user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -11,193 +12,175 @@ import 'package:senor/util/debouncer.dart';
 import 'package:senor/util/profile.dart';
 
 class MyProfilePage extends StatelessWidget {
-  final String uid;
-
-  const MyProfilePage({
-    Key key,
-    @required this.uid,
-  }) : super(key: key);
+  const MyProfilePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
+    return const SingleChildScrollView(
+      child: const Padding(
         padding: const EdgeInsets.all(8.0),
-        child: _PageDetails(uid: uid),
+        child: const _PageDetails(),
       ),
     );
   }
 }
 
-class _PageDetails extends StatefulWidget {
-  final String uid;
-
-  const _PageDetails({
-    Key key,
-    @required this.uid,
-  }) : super(key: key);
-
-  @override
-  _PageDetailsState createState() => _PageDetailsState();
-}
-
-class _PageDetailsState extends State<_PageDetails> {
-  DocumentReference _ref;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _ref = Firestore.instance.document('users/${widget.uid}');
-  }
+class _PageDetails extends StatelessWidget {
+  const _PageDetails({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _ref.snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const LoadingIndicator();
-        }
+    return ScopedModelDescendant<UserModel>(
+      builder: (context, child, curUser) {
+        final DocumentReference ref =
+            Firestore.instance.document('users/${curUser.uid}');
+        return StreamBuilder(
+          stream: ref.snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const LoadingIndicator();
+            }
 
-        final data = snapshot.data;
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: UserIcon(
-                radius: 48,
-                photoUrl: data['photoUrl'],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                parseUserDisplayName(data),
-                style: Theme.of(context).textTheme.headline,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ProfileTidbit(
-                    data: parseUserReputation(data).toString(),
-                    desc: 'REP',
+            final data = snapshot.data;
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: UserIcon(
+                    radius: 48,
+                    photoUrl: data['photoUrl'],
                   ),
-                  ProfileTidbit(
-                    data: buildProfileDateString(
-                      parseUserCreationTimestamp(data),
-                    ),
-                    desc: 'JOINED',
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    parseUserDisplayName(data),
+                    style: Theme.of(context).textTheme.headline,
                   ),
-                ],
-              ),
-            ),
-            const Divider(),
-            Text(
-              'About myself',
-              style: Theme.of(context).textTheme.body2.apply(
-                    color: Theme.of(context).primaryColor,
-                  ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _DropDownListItem(
-                    ref: _ref,
-                    field: 'gender',
-                    values: const [
-                      'Male',
-                      'Female',
-                      'Others',
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ProfileTidbit(
+                        data: parseUserReputation(data).toString(),
+                        desc: 'REP',
+                      ),
+                      ProfileTidbit(
+                        data: buildProfileDateString(
+                          parseUserCreationTimestamp(data),
+                        ),
+                        desc: 'JOINED',
+                      ),
                     ],
                   ),
-                  _DropDownListItem(
-                    ref: _ref,
-                    field: 'religion',
-                    values: const [
-                      'Buddhist',
-                      'Christian',
-                      'Free thinker',
-                      'Hindu',
-                      'Islam',
-                      'Roman Catholic',
-                      'Sikh',
-                      'Others',
+                ),
+                const Divider(),
+                Text(
+                  'About myself',
+                  style: Theme.of(context).textTheme.body2.apply(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _DropDownListItem(
+                        ref: ref,
+                        field: 'gender',
+                        values: const [
+                          'Male',
+                          'Female',
+                          'Others',
+                        ],
+                      ),
+                      _DropDownListItem(
+                        ref: ref,
+                        field: 'religion',
+                        values: const [
+                          'Buddhist',
+                          'Christian',
+                          'Free thinker',
+                          'Hindu',
+                          'Islam',
+                          'Roman Catholic',
+                          'Sikh',
+                          'Others',
+                        ],
+                      ),
+                      _DropDownListItem(
+                        ref: ref,
+                        field: 'race',
+                        values: const [
+                          'Chinese',
+                          'Malay',
+                          'Indian',
+                          'Eurasian',
+                          'Hispanic',
+                          'Caucasian',
+                          'African',
+                          'Others',
+                        ],
+                      ),
                     ],
                   ),
-                  _DropDownListItem(
-                    ref: _ref,
-                    field: 'race',
-                    values: const [
-                      'Chinese',
-                      'Malay',
-                      'Indian',
-                      'Eurasian',
-                      'Hispanic',
-                      'Caucasian',
-                      'African',
-                      'Others',
+                ),
+                _TextFieldListItem(
+                  field: 'describeMyself',
+                  label: 'Describe Myself',
+                  icon: Icons.person_outline,
+                  ref: ref,
+                ),
+                const Divider(),
+                Text(
+                  'Education background',
+                  style: Theme.of(context).textTheme.body2.apply(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    children: [
+                      _TextFieldListItem(
+                        field: 'universityAttended',
+                        label: 'University attended',
+                        icon: Icons.account_balance,
+                        ref: ref,
+                      ),
+                      _TextFieldListItem(
+                        field: 'coursesPursued',
+                        label: 'Courses pursued',
+                        icon: Icons.book,
+                        ref: ref,
+                      ),
+                      _TextFieldListItem(
+                        field: 'highSchoolAttended',
+                        label: 'High school attended',
+                        icon: Icons.account_balance,
+                        ref: ref,
+                      ),
+                      _TextFieldListItem(
+                        field: 'extracurricularsTaken',
+                        label: 'Extracurriculars taken',
+                        icon: Icons.golf_course,
+                        ref: ref,
+                      ),
+                      _TextFieldListItem(
+                        field: 'leadershipPositions',
+                        label: 'Leadership positions',
+                        icon: Icons.people,
+                        ref: ref,
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            _TextFieldListItem(
-              field: 'describeMyself',
-              label: 'Describe Myself',
-              icon: Icons.person_outline,
-              ref: _ref,
-            ),
-            const Divider(),
-            Text(
-              'Education background',
-              style: Theme.of(context).textTheme.body2.apply(
-                    color: Theme.of(context).primaryColor,
-                  ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: [
-                  _TextFieldListItem(
-                    field: 'universityAttended',
-                    label: 'University attended',
-                    icon: Icons.account_balance,
-                    ref: _ref,
-                  ),
-                  _TextFieldListItem(
-                    field: 'coursesPursued',
-                    label: 'Courses pursued',
-                    icon: Icons.book,
-                    ref: _ref,
-                  ),
-                  _TextFieldListItem(
-                    field: 'highSchoolAttended',
-                    label: 'High school attended',
-                    icon: Icons.account_balance,
-                    ref: _ref,
-                  ),
-                  _TextFieldListItem(
-                    field: 'extracurricularsTaken',
-                    label: 'Extracurriculars taken',
-                    icon: Icons.golf_course,
-                    ref: _ref,
-                  ),
-                  _TextFieldListItem(
-                    field: 'leadershipPositions',
-                    label: 'Leadership positions',
-                    icon: Icons.people,
-                    ref: _ref,
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         );
       },
     );

@@ -9,12 +9,7 @@ import 'package:senor/util/database.dart';
 import 'package:senor/util/profile.dart';
 
 class DiscoverPage extends StatelessWidget {
-  final String curUid;
-
-  const DiscoverPage({
-    Key key,
-    @required this.curUid,
-  }) : super(key: key);
+  const DiscoverPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +40,7 @@ class DiscoverPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        _ProfileRoute(curUid: curUid, uid: doc.documentID),
+                    builder: (context) => _ProfileRoute(uid: doc.documentID),
                   ),
                 );
               },
@@ -59,12 +53,11 @@ class DiscoverPage extends StatelessWidget {
 }
 
 class _ProfileRoute extends StatelessWidget {
-  final String curUid, uid;
+  final String uid;
 
   const _ProfileRoute({
     Key key,
     @required this.uid,
-    @required this.curUid,
   }) : super(key: key);
 
   @override
@@ -76,7 +69,7 @@ class _ProfileRoute extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _ProfileRouteDetails(curUid: curUid, uid: uid),
+          child: _ProfileRouteDetails(uid: uid),
         ),
       ),
     );
@@ -84,12 +77,11 @@ class _ProfileRoute extends StatelessWidget {
 }
 
 class _ProfileRouteDetails extends StatelessWidget {
-  final String curUid, uid;
+  final String uid;
 
   const _ProfileRouteDetails({
     Key key,
     @required this.uid,
-    @required this.curUid,
   }) : super(key: key);
 
   _contactUser({BuildContext context, String toDisplayName}) async {

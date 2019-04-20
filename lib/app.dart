@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:senor/model/user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/login_page.dart';
 import 'package:senor/home_page.dart';
@@ -42,9 +44,15 @@ class _AppHome extends StatelessWidget {
           return const LoadingIndicator();
         }
 
-        final user = snapshot.data;
         if (snapshot.hasData) {
-          return HomePage(user: user);
+          final user = snapshot.data;
+          return ScopedModel<UserModel>(
+              model: UserModel(
+                uid: user.uid,
+                displayName: user.displayName,
+                photoUrl: user.photoUrl,
+              ),
+              child: const HomePage());
         }
         return LoginPage(title: title);
       },

@@ -3,15 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:senor/my_chats_page.dart';
 import 'package:senor/discover_page.dart';
 import 'package:senor/my_profile_page.dart';
-import 'package:senor/ui/user_icon.dart';
 
 class HomePage extends StatefulWidget {
-  final FirebaseUser user;
-
-  const HomePage({
-    Key key,
-    @required this.user,
-  }) : super(key: key);
+  const HomePage({Key key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -43,12 +37,12 @@ class _HomePageState extends State<HomePage> {
   _buildSelectedPageWidget() {
     switch (_selectedIdx) {
       case _discoverIdx:
-        return DiscoverPage(curUid: widget.user.uid);
+        return const DiscoverPage();
       case _profileIdx:
-        return MyProfilePage(uid: widget.user.uid);
+        return const MyProfilePage();
       case _chatsIdx:
       default:
-        return MyChatsPage(uid: widget.user.uid);
+        return const MyChatsPage();
     }
   }
 
