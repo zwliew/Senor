@@ -49,6 +49,7 @@ class _PageDetails extends StatelessWidget {
                   child: UserIcon(
                     radius: 48,
                     photoUrl: data['photoUrl'],
+                    displayName: parseUserDisplayName(data),
                   ),
                 ),
                 Padding(

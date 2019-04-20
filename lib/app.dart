@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -30,34 +31,51 @@ class App extends StatelessWidget {
   }
 }
 
-class _AppHome extends StatelessWidget {
+class _AppHome extends StatefulWidget {
   final String title;
 
   const _AppHome({Key key, @required this.title}) : super(key: key);
 
   @override
+  _AppHomeState createState() => _AppHomeState();
+}
+
+class _AppHomeState extends State<_AppHome> {
+  final _curUser = UserModel();
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingIndicator();
-        }
+    return ScopedModel<UserModel>(
+      model: _curUser,
+      child: StreamBuilder(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingIndicator();
+          }
 
-        if (snapshot.hasData) {
-          final user = snapshot.data;
-          return ScopedModel<UserModel>(
-            model: UserModel(
-              uid: user.uid,
-              displayName: user.displayName,
-              photoUrl: user.photoUrl,
-            ),
-            child: const HomePage(),
-          );
-        }
+          if (snapshot.hasData) {
+            final user = snapshot.data;
+            Firestore.instance
+                .collection('users')
+                .where('uid', isEqualTo: user.uid)
+                .getDocuments()
+                .then((snapshot) {
+              if (snapshot.documents.length == 0) {
+                _curUser.clear();
+                return;
+              }
+              final doc = snapshot.documents[0];
+              _curUser.setUser(
+                uid: doc.documentID,
+              );
+            });
+            return const HomePage();
+          }
 
-        return LoginPage(title: title);
-      },
+          return LoginPage(title: widget.title);
+        },
+      ),
     );
   }
 }
