@@ -37,6 +37,7 @@ class MyChatsPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => ChatPage(
                                 chatId: doc.documentID,
+                                recipient: recipient,
                               ),
                         ),
                       );

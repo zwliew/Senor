@@ -88,22 +88,39 @@ class _ProfileRouteDetails extends StatelessWidget {
 
   _contactUser({
     @required BuildContext context,
-    @required Map<String, bool> recipients,
+    @required String myUid,
+    @required String otherUid,
   }) async {
     // TODO: Add an alternative method of contacting a user
     // This could be a built-in messaging platform,
     // or a user-defined mode of communication.
     // Examples include WhatsApp, Facebook, Instagram.
-    final ref = Firestore.instance.collection('chats').document();
-    final snapshot = await ref.get();
-    if (!snapshot.exists) {
-      await ref.setData({'recipients': recipients});
+    final snapshot = await Firestore.instance
+        .collection('chats')
+        .where('recipients.$myUid', isEqualTo: true)
+        .where('recipients.$otherUid', isEqualTo: true)
+        .getDocuments();
+    String chatId;
+    if (snapshot.documents.length == 0) {
+      final ref = Firestore.instance.collection('chats').document();
+      chatId = ref.documentID;
+      ref.setData({
+        'recipients': {
+          myUid: true,
+          otherUid: true,
+        }
+      });
+    } else {
+      chatId = snapshot.documents[0].documentID;
     }
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatPage(chatId: ref.documentID),
+        builder: (context) => ChatPage(
+              chatId: chatId,
+              recipient: otherUid,
+            ),
       ),
     );
   }
@@ -187,10 +204,8 @@ class _ProfileRouteDetails extends StatelessWidget {
                 builder: (context, child, curUser) => RaisedButton(
                       onPressed: () => _contactUser(
                             context: context,
-                            recipients: {
-                              uid: true,
-                              curUser.uid: true,
-                            },
+                            otherUid: uid,
+                            myUid: curUser.uid,
                           ),
                       child: const Text('Contact Me'),
                     ),
