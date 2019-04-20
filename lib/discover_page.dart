@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:senor/chat_page.dart';
+import 'package:senor/model/user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -36,14 +37,15 @@ class DiscoverPage extends StatelessWidget {
                 parseUserDisplayName(doc),
               ),
               subtitle: Text(parseUserDescription(doc)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => _ProfileRoute(uid: doc.documentID),
+              onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ScopedModel(
+                            model: ScopedModel.of<UserModel>(context),
+                            child: _ProfileRoute(uid: doc.documentID),
+                          ),
+                    ),
                   ),
-                );
-              },
             );
           },
         );
@@ -84,11 +86,26 @@ class _ProfileRouteDetails extends StatelessWidget {
     @required this.uid,
   }) : super(key: key);
 
-  _contactUser({BuildContext context, String toDisplayName}) async {
+  _contactUser({
+    @required BuildContext context,
+    @required Map<String, bool> recipients,
+  }) async {
     // TODO: Add an alternative method of contacting a user
     // This could be a built-in messaging platform,
     // or a user-defined mode of communication.
     // Examples include WhatsApp, Facebook, Instagram.
+    final ref = Firestore.instance.collection('chats').document();
+    final snapshot = await ref.get();
+    if (!snapshot.exists) {
+      await ref.setData({'recipients': recipients});
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(chatId: ref.documentID),
+      ),
+    );
   }
 
   @override
@@ -166,12 +183,17 @@ class _ProfileRouteDetails extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                onPressed: () => _contactUser(
-                      context: context,
-                      toDisplayName: parseUserDisplayName(data),
+              child: ScopedModelDescendant<UserModel>(
+                builder: (context, child, curUser) => RaisedButton(
+                      onPressed: () => _contactUser(
+                            context: context,
+                            recipients: {
+                              uid: true,
+                              curUser.uid: true,
+                            },
+                          ),
+                      child: const Text('Contact Me'),
                     ),
-                child: const Text('Contact Me'),
               ),
             ),
           ],

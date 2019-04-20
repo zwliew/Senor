@@ -47,13 +47,15 @@ class _AppHome extends StatelessWidget {
         if (snapshot.hasData) {
           final user = snapshot.data;
           return ScopedModel<UserModel>(
-              model: UserModel(
-                uid: user.uid,
-                displayName: user.displayName,
-                photoUrl: user.photoUrl,
-              ),
-              child: const HomePage());
+            model: UserModel(
+              uid: user.uid,
+              displayName: user.displayName,
+              photoUrl: user.photoUrl,
+            ),
+            child: const HomePage(),
+          );
         }
+
         return LoginPage(title: title);
       },
     );
