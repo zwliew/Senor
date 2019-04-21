@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:senor/bloc/current_user.dart';
 import 'package:senor/chat_page.dart';
-import 'package:senor/model/user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 
 class MyChatsPage extends StatelessWidget {
@@ -10,8 +10,9 @@ class MyChatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<UserModel>(
-      builder: (context, child, curUser) => StreamBuilder(
+    return BlocBuilder<CurrentUserEvent, CurrentUser>(
+      bloc: BlocProvider.of<CurrentUserBloc>(context),
+      builder: (context, curUser) => StreamBuilder(
             stream: Firestore.instance
                 .collection('chats')
                 .where('recipients.${curUser.uid}', isEqualTo: true)

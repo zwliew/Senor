@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:senor/model/user.dart';
-import 'package:senor/ui/loading_indicator.dart';
-import 'package:senor/login_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:senor/bloc/current_user.dart';
 import 'package:senor/home_page.dart';
+import 'package:senor/login_page.dart';
+import 'package:senor/ui/loading_indicator.dart';
 
 class App extends StatelessWidget {
   static const _title = 'Senor';
@@ -41,41 +41,35 @@ class _AppHome extends StatefulWidget {
 }
 
 class _AppHomeState extends State<_AppHome> {
-  final _curUser = UserModel();
-
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<UserModel>(
-      model: _curUser,
-      child: StreamBuilder(
-        stream: FirebaseAuth.instance.onAuthStateChanged,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingIndicator();
-          }
+    final curUserBloc = BlocProvider.of<CurrentUserBloc>(context);
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingIndicator();
+        }
 
-          if (snapshot.hasData) {
-            final user = snapshot.data;
-            Firestore.instance
-                .collection('users')
-                .where('uid', isEqualTo: user.uid)
-                .getDocuments()
-                .then((snapshot) {
-              if (snapshot.documents.length == 0) {
-                _curUser.clear();
-                return;
-              }
-              final doc = snapshot.documents[0];
-              _curUser.setUser(
-                uid: doc.documentID,
-              );
-            });
-            return const HomePage();
-          }
+        if (snapshot.hasData) {
+          final user = snapshot.data;
+          Firestore.instance
+              .collection('users')
+              .where('uid', isEqualTo: user.uid)
+              .getDocuments()
+              .then((snapshot) {
+            if (snapshot.documents.length == 0) {
+              curUserBloc.dispatch(LoggedOut());
+              return;
+            }
+            final doc = snapshot.documents[0];
+            curUserBloc.dispatch(LoggedIn(doc.documentID));
+          });
+          return const HomePage();
+        }
 
-          return LoginPage(title: widget.title);
-        },
-      ),
+        return LoginPage(title: widget.title);
+      },
     );
   }
 }

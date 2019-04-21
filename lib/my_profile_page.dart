@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:senor/model/user.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:senor/bloc/current_user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -30,8 +30,9 @@ class _PageDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<UserModel>(
-      builder: (context, child, curUser) {
+    return BlocBuilder<CurrentUserEvent, CurrentUser>(
+      bloc: BlocProvider.of<CurrentUserBloc>(context),
+      builder: (context, curUser) {
         final DocumentReference ref =
             Firestore.instance.document('users/${curUser.uid}');
         return StreamBuilder(

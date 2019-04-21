@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:senor/bloc/current_user.dart';
 import 'package:senor/chat_page.dart';
-import 'package:senor/model/user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -40,10 +40,7 @@ class DiscoverPage extends StatelessWidget {
               onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ScopedModel(
-                            model: ScopedModel.of<UserModel>(context),
-                            child: _ProfileRoute(uid: doc.documentID),
-                          ),
+                      builder: (_) => _ProfileRoute(uid: doc.documentID),
                     ),
                   ),
             );
@@ -200,8 +197,9 @@ class _ProfileRouteDetails extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ScopedModelDescendant<UserModel>(
-                builder: (context, child, curUser) => RaisedButton(
+              child: BlocBuilder<CurrentUserEvent, CurrentUser>(
+                bloc: BlocProvider.of<CurrentUserBloc>(context),
+                builder: (context, curUser) => RaisedButton(
                       onPressed: () => _contactUser(
                             context: context,
                             otherUid: uid,
