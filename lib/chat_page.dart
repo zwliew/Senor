@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/ui/loading_indicator.dart';
+import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/time.dart';
 
 class ChatPage extends StatelessWidget {
@@ -40,7 +41,28 @@ class ChatPage extends StatelessWidget {
                     final doc = docs[index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(doc['text']),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: UserIcon(displayName: recipientId),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                recipientId,
+                                style: Theme.of(context).textTheme.subtitle,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Text(doc['text']),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
