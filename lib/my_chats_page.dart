@@ -15,7 +15,7 @@ class MyChatsPage extends StatelessWidget {
       builder: (context, curUser) => StreamBuilder(
             stream: Firestore.instance
                 .collection('chats')
-                .where('recipients.${curUser.uid}', isEqualTo: true)
+                .where('recipients.${curUser.id}', isEqualTo: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -27,18 +27,18 @@ class MyChatsPage extends StatelessWidget {
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final doc = docs[index];
-                  final recipient = doc['recipients']
+                  final recipientId = doc['recipients']
                       .keys
-                      .firstWhere((el) => el != curUser.uid);
+                      .firstWhere((el) => el != curUser.id);
                   return ListTile(
-                    title: Text(recipient),
+                    title: Text(recipientId),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ChatPage(
                                 chatId: doc.documentID,
-                                recipient: recipient,
+                                recipientId: recipientId,
                               ),
                         ),
                       );

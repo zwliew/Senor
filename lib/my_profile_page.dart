@@ -34,7 +34,7 @@ class _PageDetails extends StatelessWidget {
       bloc: BlocProvider.of<CurrentUserBloc>(context),
       builder: (context, curUser) {
         final DocumentReference ref =
-            Firestore.instance.document('users/${curUser.uid}');
+            Firestore.instance.document('users/${curUser.id}');
         return StreamBuilder(
           stream: ref.snapshots(),
           builder: (context, snapshot) {

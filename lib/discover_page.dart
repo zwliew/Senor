@@ -40,7 +40,7 @@ class DiscoverPage extends StatelessWidget {
               onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => _ProfileRoute(uid: doc.documentID),
+                      builder: (_) => _ProfileRoute(id: doc.documentID),
                     ),
                   ),
             );
@@ -52,11 +52,11 @@ class DiscoverPage extends StatelessWidget {
 }
 
 class _ProfileRoute extends StatelessWidget {
-  final String uid;
+  final String id;
 
   const _ProfileRoute({
     Key key,
-    @required this.uid,
+    @required this.id,
   }) : super(key: key);
 
   @override
@@ -68,7 +68,7 @@ class _ProfileRoute extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _ProfileRouteDetails(uid: uid),
+          child: _ProfileRouteDetails(id: id),
         ),
       ),
     );
@@ -76,17 +76,17 @@ class _ProfileRoute extends StatelessWidget {
 }
 
 class _ProfileRouteDetails extends StatelessWidget {
-  final String uid;
+  final String id;
 
   const _ProfileRouteDetails({
     Key key,
-    @required this.uid,
+    @required this.id,
   }) : super(key: key);
 
   _contactUser({
     @required BuildContext context,
-    @required String myUid,
-    @required String otherUid,
+    @required String myId,
+    @required String otherId,
   }) async {
     // TODO: Add an alternative method of contacting a user
     // This could be a built-in messaging platform,
@@ -94,8 +94,8 @@ class _ProfileRouteDetails extends StatelessWidget {
     // Examples include WhatsApp, Facebook, Instagram.
     final snapshot = await Firestore.instance
         .collection('chats')
-        .where('recipients.$myUid', isEqualTo: true)
-        .where('recipients.$otherUid', isEqualTo: true)
+        .where('recipients.$myId', isEqualTo: true)
+        .where('recipients.$otherId', isEqualTo: true)
         .getDocuments();
     String chatId;
     if (snapshot.documents.length == 0) {
@@ -103,8 +103,8 @@ class _ProfileRouteDetails extends StatelessWidget {
       chatId = ref.documentID;
       ref.setData({
         'recipients': {
-          myUid: true,
-          otherUid: true,
+          myId: true,
+          otherId: true,
         }
       });
     } else {
@@ -116,7 +116,7 @@ class _ProfileRouteDetails extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => ChatPage(
               chatId: chatId,
-              recipient: otherUid,
+              recipientId: otherId,
             ),
       ),
     );
@@ -125,7 +125,7 @@ class _ProfileRouteDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Firestore.instance.document('users/$uid').snapshots(),
+      stream: Firestore.instance.document('users/$id').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const LoadingIndicator();
@@ -202,8 +202,8 @@ class _ProfileRouteDetails extends StatelessWidget {
                 builder: (context, curUser) => RaisedButton(
                       onPressed: () => _contactUser(
                             context: context,
-                            otherUid: uid,
-                            myUid: curUser.uid,
+                            otherId: id,
+                            myId: curUser.id,
                           ),
                       child: const Text('Contact Me'),
                     ),
