@@ -14,39 +14,44 @@ class DiscoverPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: Firestore.instance.collection('users').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: const CircularProgressIndicator(),
-          );
-        }
+    return BlocBuilder<CurrentUserEvent, CurrentUser>(
+      bloc: BlocProvider.of<CurrentUserBloc>(context),
+      builder: (context, curUser) => StreamBuilder(
+            stream: Firestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: const CircularProgressIndicator(),
+                );
+              }
 
-        final docs = snapshot.data.documents;
-        return ListView.builder(
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final doc = docs[index];
-            return ListTile(
-              leading: UserIcon(
-                photoUrl: doc['photoUrl'],
-                displayName: parseUserDisplayName(doc),
-              ),
-              title: Text(
-                parseUserDisplayName(doc),
-              ),
-              subtitle: Text(parseUserDescription(doc)),
-              onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => _ProfileRoute(id: doc.documentID),
+              final docs = snapshot.data.documents
+                  .where((doc) => doc.documentID != curUser.id)
+                  .toList();
+              return ListView.builder(
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final doc = docs[index];
+                  return ListTile(
+                    leading: UserIcon(
+                      photoUrl: doc['photoUrl'],
+                      displayName: parseUserDisplayName(doc),
                     ),
-                  ),
-            );
-          },
-        );
-      },
+                    title: Text(
+                      parseUserDisplayName(doc),
+                    ),
+                    subtitle: Text(parseUserDescription(doc)),
+                    onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => _ProfileRoute(id: doc.documentID),
+                          ),
+                        ),
+                  );
+                },
+              );
+            },
+          ),
     );
   }
 }
