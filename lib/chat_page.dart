@@ -24,7 +24,7 @@ class ChatPage extends StatelessWidget {
       body: StreamBuilder(
         stream: Firestore.instance
             .collection('chats/$chatId/messages')
-            .orderBy('sentTimestamp')
+            .orderBy('sentTimestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -36,6 +36,7 @@ class ChatPage extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
+                  reverse: true,
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
                     final doc = docs[index];
