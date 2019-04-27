@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -43,6 +48,7 @@ class ChatPage extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
@@ -55,6 +61,17 @@ class ChatPage extends StatelessWidget {
                                 recipientId,
                                 style: Theme.of(context).textTheme.subtitle,
                               ),
+                              if (doc['imageUrl'] != null)
+                                CachedNetworkImage(
+                                  imageUrl: doc['imageUrl'],
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                  width: 160.0,
+                                  height: 160.0,
+                                  fit: BoxFit.cover,
+                                ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 4.0),
@@ -74,17 +91,31 @@ class ChatPage extends StatelessWidget {
                 child: BlocBuilder<CurrentUserEvent, CurrentUser>(
                   bloc: BlocProvider.of<CurrentUserBloc>(context),
                   builder: (context, curUser) => _TextFieldForm(
-                        onSubmit: (text) {
+                        onSubmit: ({String text, File imageFile}) async {
+                          // TODO: Refactor all this logic into a Cloud Function
                           final ref = Firestore.instance
                               .collection('chats/$chatId/messages')
                               .document();
+
                           ref.setData({
                             'text': text,
                             'from': curUser.id,
                             'sentTimestamp': curMs(),
                           });
+
+                          if (imageFile != null) {
+                            final fileRef = FirebaseStorage.instance
+                                .ref()
+                                .child(curMs().toString());
+                            final task = fileRef.putFile(imageFile);
+                            final snapshot = await task.onComplete;
+                            final url = await snapshot.ref.getDownloadURL();
+                            ref.updateData({
+                              'imageUrl': url,
+                            });
+                          }
                         },
-                        emptyError: 'Please enter your message.',
+                        emptyError: 'Please enter a message.',
                       ),
                 ),
               ),
@@ -114,17 +145,63 @@ class _TextFieldFormState extends State<_TextFieldForm> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 
+  File _imageFile;
+
+  bool _isComposing() {
+    return _controller.text.trim().length > 0 || _imageFile != null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Row(
         children: [
+          IconButton(
+            icon: _imageFile != null
+                ? Image.file(
+                    _imageFile,
+                    width: 24.0,
+                    height: 24.0,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.image),
+            onPressed: () async {
+              final image = await ImagePicker.pickImage(
+                source: ImageSource.gallery,
+              );
+              if (image != null) {
+                setState(() {
+                  _imageFile = image;
+                });
+              }
+            },
+          ),
           Expanded(
             child: TextFormField(
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Type a message',
+              ),
               controller: _controller,
               validator: (value) {
-                if (value.isEmpty) {
+                if (value.isEmpty && _imageFile == null) {
                   return widget.emptyError;
                 }
               },
@@ -133,12 +210,20 @@ class _TextFieldFormState extends State<_TextFieldForm> {
           IconButton(
             icon: const Icon(Icons.send),
             color: Theme.of(context).primaryColor,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                widget.onSubmit(_controller.text);
-                _controller.clear();
-              }
-            },
+            onPressed: _isComposing()
+                ? () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
+
+                    widget.onSubmit(
+                      text: _controller.text,
+                      imageFile: _imageFile,
+                    );
+                    _imageFile = null;
+                    _controller.clear();
+                  }
+                : null,
           ),
         ],
       ),
