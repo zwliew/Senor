@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:senor/my_chats_page.dart';
 import 'package:senor/discover_page.dart';
 import 'package:senor/my_profile_page.dart';
+import 'package:senor/singletons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -29,6 +30,28 @@ class _HomePageState extends State<HomePage> {
   int _selectedIdx = 0;
 
   void _handleNavigationItemTap(int index) {
+    String screenName;
+    String screenClassOverride;
+    switch (index) {
+      case _discoverIdx:
+        screenName = 'discover';
+        screenClassOverride = 'DiscoverPage';
+        break;
+      case _profileIdx:
+        screenName = 'my_profile';
+        screenClassOverride = 'MyProfilePage';
+        break;
+      case _chatsIdx:
+      default:
+        screenName = 'my_chats';
+        screenClassOverride = 'MyChatsPage';
+        break;
+    }
+    Analytics.analytics.setCurrentScreen(
+      screenName: screenName,
+      screenClassOverride: screenClassOverride,
+    );
+
     setState(() {
       _selectedIdx = index;
     });
@@ -75,6 +98,7 @@ class _HomePageState extends State<HomePage> {
             onSelected: (result) {
               switch (result) {
                 case _PopupMenuOptions.logout:
+                  Analytics.analytics.logEvent(name: 'logout');
                   FirebaseAuth.instance.signOut();
                   break;
                 default:

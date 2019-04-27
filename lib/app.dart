@@ -1,19 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/home_page.dart';
 import 'package:senor/login_page.dart';
+import 'package:senor/singletons.dart';
 import 'package:senor/ui/loading_indicator.dart';
 
 class App extends StatelessWidget {
   static const _title = 'Senor';
-
-  static final _analytics = FirebaseAnalytics();
-  static final _observer = FirebaseAnalyticsObserver(analytics: _analytics);
 
   const App({Key key}) : super(key: key);
 
@@ -25,7 +21,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         accentColor: Colors.redAccent,
       ),
-      navigatorObservers: [_observer],
+      navigatorObservers: [Analytics.observer],
       home: const _AppHome(title: _title),
     );
   }

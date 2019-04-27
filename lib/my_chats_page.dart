@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/chat_page.dart';
+import 'package:senor/singletons.dart';
 import 'package:senor/ui/loading_indicator.dart';
 
 class MyChatsPage extends StatelessWidget {
@@ -33,6 +34,11 @@ class MyChatsPage extends StatelessWidget {
                   return ListTile(
                     title: Text(recipientId),
                     onTap: () {
+                      Analytics.analytics.setCurrentScreen(
+                        screenName: 'chat',
+                        screenClassOverride: 'ChatPage',
+                      );
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(

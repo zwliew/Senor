@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/chat_page.dart';
+import 'package:senor/singletons.dart';
 import 'package:senor/ui/loading_indicator.dart';
 import 'package:senor/ui/profile_tidbit.dart';
 import 'package:senor/ui/user_icon.dart';
@@ -41,12 +42,19 @@ class DiscoverPage extends StatelessWidget {
                       parseUserDisplayName(doc),
                     ),
                     subtitle: Text(parseUserDescription(doc)),
-                    onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => _ProfileRoute(id: doc.documentID),
-                          ),
+                    onTap: () {
+                      Analytics.analytics.setCurrentScreen(
+                        screenName: 'profile',
+                        screenClassOverride: 'ProfileRoute',
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => _ProfileRoute(id: doc.documentID),
                         ),
+                      );
+                    },
                   );
                 },
               );
