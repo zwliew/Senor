@@ -84,7 +84,10 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context) => [
                   const PopupMenuItem(
                     value: _PopupMenuOptions.logout,
-                    child: const Text('Log out'),
+                    child: const ListTile(
+                      leading: const Icon(Icons.exit_to_app),
+                      title: const Text('Log out'),
+                    ),
                   ),
                 ],
           )
