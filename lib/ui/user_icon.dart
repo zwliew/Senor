@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:random_color/random_color.dart';
 
 class UserIcon extends StatelessWidget {
-  static final _randomColor = RandomColor();
   final String displayName;
   final String photoUrl;
   final double radius;
@@ -28,7 +26,7 @@ class UserIcon extends StatelessWidget {
     if (displayName != null) {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: _randomColor.randomColor(),
+        backgroundColor: Theme.of(context).accentColor,
         child: Text(displayName
             .split(' ')
             .take(2)
@@ -41,7 +39,7 @@ class UserIcon extends StatelessWidget {
     // Else, display a smiley face with a random BG color
     return CircleAvatar(
       radius: radius,
-      backgroundColor: _randomColor.randomColor(),
+      backgroundColor: Theme.of(context).accentColor,
       child: const Text(':D'),
     );
   }
