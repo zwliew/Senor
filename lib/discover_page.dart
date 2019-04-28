@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:senor/bloc/current_user.dart';
 import 'package:senor/profile_route.dart';
-import 'package:senor/singletons.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/database.dart';
 
