@@ -8,8 +8,10 @@ import 'package:senor/discover_page.dart';
 import 'package:senor/my_profile_page.dart';
 import 'package:senor/profile_route.dart';
 import 'package:senor/singletons.dart';
+import 'package:senor/ui/text_field_list_item.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/database.dart';
+import 'package:senor/util/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -18,7 +20,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-enum _PopupMenuOptions { logout }
+enum _OptionsMenuItems { logout }
 
 class _HomePageState extends State<HomePage> {
   static const _chatsIdx = 0;
@@ -35,7 +37,8 @@ class _HomePageState extends State<HomePage> {
 
   final _discoverPageSearchDelegate = _DiscoverPageSearchDelegate();
 
-  int _selectedIdx = 0;
+  var _selectedIdx = 0;
+  var _discoverPageSearchFilter = DiscoverPageSearchFilter();
 
   void _handleNavigationItemTap(int index) {
     String screenName;
@@ -68,7 +71,7 @@ class _HomePageState extends State<HomePage> {
   _buildSelectedPageWidget() {
     switch (_selectedIdx) {
       case _discoverIdx:
-        return const DiscoverPage();
+        return DiscoverPage(filter: _discoverPageSearchFilter);
       case _profileIdx:
         return const MyProfilePage();
       case _chatsIdx:
@@ -119,7 +122,7 @@ class _HomePageState extends State<HomePage> {
             tooltip: 'Options',
             onSelected: (result) {
               switch (result) {
-                case _PopupMenuOptions.logout:
+                case _OptionsMenuItems.logout:
                   Analytics.analytics.logEvent(name: 'logout');
                   FirebaseAuth.instance.signOut();
                   break;
@@ -129,7 +132,7 @@ class _HomePageState extends State<HomePage> {
             },
             itemBuilder: (context) => [
                   const PopupMenuItem(
-                    value: _PopupMenuOptions.logout,
+                    value: _OptionsMenuItems.logout,
                     child: const ListTile(
                       leading: const Icon(Icons.exit_to_app),
                       title: const Text('Log out'),
@@ -158,6 +161,61 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIdx,
         onTap: _handleNavigationItemTap,
       ),
+      floatingActionButton: _selectedIdx == _discoverIdx
+          ? FloatingActionButton(
+              child: const Icon(Icons.filter_list),
+              onPressed: () async {
+                var filter = _discoverPageSearchFilter.copyWith();
+
+                await showModalBottomSheet<void>(
+                  context: context,
+                  builder: (context) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              'Filters',
+                              style: Theme.of(context).textTheme.headline,
+                            ),
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.universityAttended,
+                            icon: Icons.account_balance,
+                            text: filter.universityAttended,
+                            delayMs: 0,
+                            onChanged: (value) {
+                              filter = filter.copyWith(
+                                universityAttended: value.trim(),
+                              );
+                            },
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.coursesPursured,
+                            icon: Icons.book,
+                            text: filter.coursesPursued,
+                            delayMs: 0,
+                            onChanged: (value) {
+                              filter = filter.copyWith(
+                                coursesPursued: value.trim(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+
+                setState(() {
+                  _discoverPageSearchFilter = filter;
+                });
+              },
+            )
+          : null,
     );
   }
 }

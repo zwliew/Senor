@@ -6,8 +6,45 @@ import 'package:senor/profile_route.dart';
 import 'package:senor/ui/user_icon.dart';
 import 'package:senor/util/database.dart';
 
+class DiscoverPageSearchFilter {
+  final String universityAttended;
+  final String coursesPursued;
+
+  const DiscoverPageSearchFilter({
+    this.universityAttended = '',
+    this.coursesPursued = '',
+  });
+
+  DiscoverPageSearchFilter copyWith({
+    String universityAttended,
+    String coursesPursued,
+  }) {
+    return DiscoverPageSearchFilter(
+      universityAttended: universityAttended ?? this.universityAttended,
+      coursesPursued: coursesPursued ?? this.coursesPursued,
+    );
+  }
+
+  bool matches({
+    String universityAttended = '',
+    String coursesPursued = '',
+  }) {
+    return universityAttended
+            .toLowerCase()
+            .contains(this.universityAttended.toLowerCase()) &&
+        coursesPursued
+            .toLowerCase()
+            .contains(this.coursesPursued.toLowerCase());
+  }
+}
+
 class DiscoverPage extends StatelessWidget {
-  const DiscoverPage({Key key}) : super(key: key);
+  final DiscoverPageSearchFilter filter;
+
+  const DiscoverPage({
+    Key key,
+    @required this.filter,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +60,12 @@ class DiscoverPage extends StatelessWidget {
               }
 
               final docs = snapshot.data.documents
-                  .where((doc) => doc.documentID != curUser.id)
+                  .where((doc) =>
+                      doc.documentID != curUser.id &&
+                      filter.matches(
+                        universityAttended: parseUserUniversityAttended(doc),
+                        coursesPursued: parseUserCoursesPursued(doc),
+                      ))
                   .toList();
               return ListView.builder(
                 itemCount: docs.length,

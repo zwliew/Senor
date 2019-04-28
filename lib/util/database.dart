@@ -27,3 +27,11 @@ String parseUserReligion(data) {
 String parseUserDisplayName(data) {
   return data['displayName'] ?? '';
 }
+
+String parseUserUniversityAttended(data) {
+  return data['universityAttended'] ?? '';
+}
+
+String parseUserCoursesPursued(data) {
+  return data['coursesPursued'] ?? '';
+}

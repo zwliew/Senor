@@ -9,6 +9,8 @@ class TextFieldListItem extends StatelessWidget {
   final String field;
   final Function onChanged;
   final Stream stream;
+  final String text;
+  final int delayMs;
 
   const TextFieldListItem({
     Key key,
@@ -17,6 +19,8 @@ class TextFieldListItem extends StatelessWidget {
     @required this.onChanged,
     this.stream,
     this.field,
+    this.text,
+    this.delayMs,
   }) : super(key: key);
 
   @override
@@ -30,6 +34,8 @@ class TextFieldListItem extends StatelessWidget {
         field: field,
         onChanged: onChanged,
         stream: stream,
+        text: text,
+        delayMs: delayMs,
       ),
     );
   }
@@ -41,6 +47,8 @@ class _TextField extends StatefulWidget {
   final String field;
   final Function onChanged;
   final Stream stream;
+  final String text;
+  final int delayMs;
 
   const _TextField({
     Key key,
@@ -49,6 +57,8 @@ class _TextField extends StatefulWidget {
     @required this.onChanged,
     this.stream,
     this.field,
+    this.text,
+    this.delayMs,
   }) : super(key: key);
 
   @override
@@ -56,18 +66,18 @@ class _TextField extends StatefulWidget {
 }
 
 class _TextFieldState extends State<_TextField> {
-  // Delay in milliseconds after a text change to be sure
-  // that the user is not currently typing
-  static const _textEditDelayMs = 750;
-
-  final _controller = TextEditingController();
   final _debouncer = Debouncer();
-  StreamSubscription _subscription;
+
   int _lastEditedMs = 0;
+
+  TextEditingController _controller;
+  StreamSubscription _subscription;
 
   @override
   void initState() {
     super.initState();
+
+    _controller = TextEditingController(text: widget.text);
 
     _subscription = widget.stream?.listen((snapshot) {
       setState(() {
@@ -75,8 +85,9 @@ class _TextFieldState extends State<_TextField> {
         // 1. The text was not changed by the user in the app
         // 2. The user is not currently editing the text
         if (_controller.text != snapshot.data[widget.field] &&
-            DateTime.now().millisecondsSinceEpoch - _lastEditedMs >
-                _textEditDelayMs) {
+            (widget.delayMs == null ||
+                DateTime.now().millisecondsSinceEpoch - _lastEditedMs >
+                    widget.delayMs)) {
           _controller.text = snapshot.data[widget.field];
         }
       });
@@ -102,7 +113,11 @@ class _TextFieldState extends State<_TextField> {
       controller: _controller,
       onChanged: (value) {
         _lastEditedMs = DateTime.now().millisecondsSinceEpoch;
-        _debouncer.run(_textEditDelayMs, () => widget.onChanged(value));
+        if (widget.delayMs == null) {
+          widget.onChanged(value);
+        } else {
+          _debouncer.run(widget.delayMs, () => widget.onChanged(value));
+        }
       },
     );
   }

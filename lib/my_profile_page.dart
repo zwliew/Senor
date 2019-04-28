@@ -24,6 +24,17 @@ class MyProfilePage extends StatelessWidget {
 }
 
 class _PageDetails extends StatelessWidget {
+  static const _describeMyselfField = 'describeMyself';
+  static const _universityAttendedField = 'universityAttended';
+  static const _coursesPursuedField = 'coursesPursued';
+  static const _highSchoolAttendedField = 'highSchoolAttended';
+  static const _extracurricularsTakenField = 'extracurricularsTaken';
+  static const _leadershipPositionsField = 'leadershipPositions';
+
+  // Delay in milliseconds after a text change to be sure
+  // that the user is not currently typing
+  static const _textEditDelayMs = 750;
+
   const _PageDetails({Key key}) : super(key: key);
 
   @override
@@ -133,11 +144,12 @@ class _PageDetails extends StatelessWidget {
                   icon: Icons.person_outline,
                   onChanged: (value) {
                     ref.updateData({
-                      'describeMyself': value.trim(),
+                      _describeMyselfField: value.trim(),
                     });
                   },
                   stream: ref.snapshots(),
-                  field: 'describeMyself',
+                  field: _describeMyselfField,
+                  delayMs: _textEditDelayMs,
                 ),
                 const Divider(),
                 Text(
@@ -151,59 +163,64 @@ class _PageDetails extends StatelessWidget {
                   child: Column(
                     children: [
                       TextFieldListItem(
-                        label: 'University attended',
+                        label: ProfileLabel.universityAttended,
                         icon: Icons.account_balance,
                         onChanged: (value) {
                           ref.updateData({
-                            'universityAttended': value.trim(),
+                            _universityAttendedField: value.trim(),
                           });
                         },
                         stream: ref.snapshots(),
-                        field: 'universityAttended',
+                        field: _universityAttendedField,
+                        delayMs: _textEditDelayMs,
                       ),
                       TextFieldListItem(
-                        label: 'Courses pursued',
+                        label: ProfileLabel.coursesPursured,
                         icon: Icons.book,
                         onChanged: (value) {
                           ref.updateData({
-                            'coursesPursued': value.trim(),
+                            _coursesPursuedField: value.trim(),
                           });
                         },
                         stream: ref.snapshots(),
-                        field: 'coursesPursued',
+                        field: _coursesPursuedField,
+                        delayMs: _textEditDelayMs,
                       ),
                       TextFieldListItem(
-                        label: 'High school attended',
+                        label: ProfileLabel.highSchoolAttended,
                         icon: Icons.account_balance,
                         onChanged: (value) {
                           ref.updateData({
-                            'highSchoolAttended': value.trim(),
+                            _highSchoolAttendedField: value.trim(),
                           });
                         },
                         stream: ref.snapshots(),
-                        field: 'highSchoolAttended',
+                        field: _highSchoolAttendedField,
+                        delayMs: _textEditDelayMs,
                       ),
                       TextFieldListItem(
-                        label: 'Extracurriculars taken',
+                        label: ProfileLabel.extracurricularsTaken,
                         icon: Icons.golf_course,
                         onChanged: (value) {
                           ref.updateData({
-                            'extracurricularsTaken': value.trim(),
+                            _extracurricularsTakenField: value.trim(),
                           });
                         },
                         stream: ref.snapshots(),
-                        field: 'extracurricularsTaken',
+                        field: _extracurricularsTakenField,
+                        delayMs: _textEditDelayMs,
                       ),
                       TextFieldListItem(
-                        label: 'Leadership positions',
+                        label: ProfileLabel.leadershipPositions,
                         icon: Icons.people,
                         onChanged: (value) {
                           ref.updateData({
-                            'leadershipPositions': value.trim(),
+                            _leadershipPositionsField: value.trim(),
                           });
                         },
                         stream: ref.snapshots(),
-                        field: 'leadershipPositions',
+                        field: _leadershipPositionsField,
+                        delayMs: _textEditDelayMs,
                       ),
                     ],
                   ),
