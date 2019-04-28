@@ -50,34 +50,39 @@ class ChatPage extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          UserIcon(displayName: doc['from']),
                           Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: UserIcon(displayName: recipientId),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                recipientId,
-                                style: Theme.of(context).textTheme.subtitle,
-                              ),
-                              if (doc['imageUrl'] != null)
-                                CachedNetworkImage(
-                                  imageUrl: doc['imageUrl'],
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                  width: 160.0,
-                                  height: 160.0,
-                                  fit: BoxFit.cover,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  doc['from'],
+                                  style: Theme.of(context).textTheme.subtitle,
                                 ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Text(doc['text']),
-                              ),
-                            ],
+                                if (doc['imageUrl'] != null)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0,
+                                    ),
+                                    child: doc['imageUrl'] == 'loading'
+                                        ? const CircularProgressIndicator()
+                                        : CachedNetworkImage(
+                                            imageUrl: doc['imageUrl'],
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
+                                            width: 240.0,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                Text(doc['text']),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -98,6 +103,7 @@ class ChatPage extends StatelessWidget {
                               .document();
 
                           ref.setData({
+                            if (imageFile != null) 'imageUrl': 'loading',
                             'text': text,
                             'from': curUser.id,
                             'sentTimestamp': curMs(),
