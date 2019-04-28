@@ -51,38 +51,43 @@ class ChatPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           UserIcon(displayName: doc['from']),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  doc['from'],
-                                  style: Theme.of(context).textTheme.subtitle,
-                                ),
-                                if (doc['imageUrl'] != null)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0,
-                                    ),
-                                    child: doc['imageUrl'] == 'loading'
-                                        ? const CircularProgressIndicator()
-                                        : CachedNetworkImage(
-                                            imageUrl: doc['imageUrl'],
-                                            placeholder: (context, url) =>
-                                                const CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
-                                            width: 240.0,
-                                            fit: BoxFit.cover,
-                                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    doc['from'],
+                                    style: Theme.of(context).textTheme.subtitle,
                                   ),
-                                Text(doc['text']),
-                              ],
+                                  if (doc['imageUrl'] != null)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0,
+                                      ),
+                                      child: doc['imageUrl'] == 'loading'
+                                          ? const CircularProgressIndicator()
+                                          : CachedNetworkImage(
+                                              imageUrl: doc['imageUrl'],
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                              width: 240.0,
+                                            ),
+                                    ),
+                                  Text(doc['text']),
+                                ],
+                              ),
                             ),
+                          ),
+                          Text(
+                            fuzzyDateString(doc['sentTimestamp']),
+                            style: Theme.of(context).textTheme.caption,
                           ),
                         ],
                       ),
