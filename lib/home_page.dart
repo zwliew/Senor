@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:senor/bloc/current_user.dart';
 import 'package:senor/my_chats_page.dart';
 import 'package:senor/discover_page.dart';
 import 'package:senor/my_profile_page.dart';
+import 'package:senor/profile_route.dart';
 import 'package:senor/singletons.dart';
+import 'package:senor/ui/user_icon.dart';
+import 'package:senor/util/database.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -26,6 +32,8 @@ class _HomePageState extends State<HomePage> {
   static const _profileIdx = 2;
   static const _profileTitle = 'My Profile';
   static const _profileLabel = 'Profile';
+
+  final _discoverPageSearchDelegate = _DiscoverPageSearchDelegate();
 
   int _selectedIdx = 0;
 
@@ -92,9 +100,23 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: _buildPageTitleWidget(),
         actions: [
+          if (_selectedIdx == _discoverIdx)
+            IconButton(
+              tooltip: 'Search',
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                Analytics.analytics.setCurrentScreen(
+                  screenName: 'search',
+                  screenClassOverride: 'DiscoverPageSearchDelegate',
+                );
+                showSearch(
+                  context: context,
+                  delegate: _discoverPageSearchDelegate,
+                );
+              },
+            ),
           PopupMenuButton(
-            icon: Icon(Icons.person),
-            tooltip: 'Profile settings',
+            tooltip: 'Options',
             onSelected: (result) {
               switch (result) {
                 case _PopupMenuOptions.logout:
@@ -137,5 +159,101 @@ class _HomePageState extends State<HomePage> {
         onTap: _handleNavigationItemTap,
       ),
     );
+  }
+}
+
+class _DiscoverPageSearchDelegate extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return BlocBuilder<CurrentUserEvent, CurrentUser>(
+      bloc: BlocProvider.of<CurrentUserBloc>(context),
+      builder: (context, curUser) => StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: const CircularProgressIndicator(),
+                );
+              }
+
+              final docs = snapshot.data.documents
+                  .where((doc) =>
+                      doc.documentID != curUser.id &&
+                      parseUserDisplayName(doc)
+                          .toLowerCase()
+                          .contains(query.toLowerCase()))
+                  .toList();
+
+              if (docs.length == 0) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: const Icon(
+                          Icons.search,
+                          size: 120.0,
+                        ),
+                      ),
+                      Text(
+                        'No results',
+                        style: Theme.of(context).textTheme.headline,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final doc = docs[index];
+                  return ListTile(
+                    leading: UserIcon(
+                      photoUrl: doc['photoUrl'],
+                      displayName: parseUserDisplayName(doc),
+                    ),
+                    title: Text(
+                      parseUserDisplayName(doc),
+                    ),
+                    subtitle: Text(parseUserDescription(doc)),
+                    onTap: () => navigateToProfile(
+                          context: context,
+                          profileId: doc.documentID,
+                        ),
+                  );
+                },
+              );
+            },
+          ),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return buildResults(context);
   }
 }

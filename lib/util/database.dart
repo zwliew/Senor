@@ -1,29 +1,29 @@
 // Functions to parse data from Firestore safely
 
-parseUserCreationTimestamp(data) {
+int parseUserCreationTimestamp(data) {
   return data['creationTimestamp'] ?? 0;
 }
 
-parseUserDescription(data) {
+String parseUserDescription(data) {
   return data['describeMyself'] ?? '';
 }
 
-parseUserReputation(data) {
+int parseUserReputation(data) {
   return data['reputation'] ?? 0;
 }
 
-parseUserGender(data) {
+String parseUserGender(data) {
   return data['gender'] ?? '';
 }
 
-parseUserRace(data) {
+String parseUserRace(data) {
   return data['race'] ?? '';
 }
 
-parseUserReligion(data) {
+String parseUserReligion(data) {
   return data['religion'] ?? '';
 }
 
-parseUserDisplayName(data) {
+String parseUserDisplayName(data) {
   return data['displayName'] ?? '';
 }
