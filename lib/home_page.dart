@@ -312,6 +312,7 @@ class _DiscoverPageSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    // TODO: Show proper search suggestions
     return buildResults(context);
   }
 }

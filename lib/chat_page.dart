@@ -184,6 +184,7 @@ class _TextFieldFormState extends State<_TextFieldForm> {
       key: _formKey,
       child: Row(
         children: [
+          // TODO: Support picking of documents as well
           IconButton(
             icon: _imageFile != null
                 ? Image.file(

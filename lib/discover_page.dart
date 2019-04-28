@@ -48,6 +48,7 @@ class DiscoverPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Display active filters in DiscoverPage
     return BlocBuilder<CurrentUserEvent, CurrentUser>(
       bloc: BlocProvider.of<CurrentUserBloc>(context),
       builder: (context, curUser) => StreamBuilder<QuerySnapshot>(
