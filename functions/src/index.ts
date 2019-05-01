@@ -1,8 +1,25 @@
-import * as functions from 'firebase-functions';
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+admin.initializeApp();
+
+export const storeInitialUserData = functions.auth
+  .user()
+  .onCreate(async (user: admin.auth.UserRecord) => {
+    const { email, displayName, uid, photoURL } = user;
+    const { creationTime } = user.metadata;
+
+    const collectionRef = admin.firestore().collection("users");
+    const snapshot = await collectionRef.where("uid", "==", uid).get();
+    if (snapshot.docs.length > 0) return;
+
+    const ref = collectionRef.doc();
+    await ref.set({
+      uid,
+      email,
+      displayName,
+      photoUrl: photoURL,
+      creationTimestamp: new Date(creationTime).getTime(),
+      reputation: 10
+    });
+  });

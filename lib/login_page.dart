@@ -24,30 +24,9 @@ class LoginPage extends StatelessWidget {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    final user = await FirebaseAuth.instance.signInWithCredential(credential);
+    FirebaseAuth.instance.signInWithCredential(credential);
 
     Analytics.analytics.logLogin();
-
-    // If the user is new, store initial user data in Cloud Firestore
-    final snapshot = await Firestore.instance
-        .collection('users')
-        .where('uid', isEqualTo: user.uid)
-        .getDocuments();
-    if (snapshot.documents.length == 0) {
-      Analytics.analytics.logSignUp(
-        signUpMethod: 'google',
-      );
-
-      final ref = Firestore.instance.collection('users').document();
-      ref.setData({
-        'uid': user.uid,
-        'email': user.email,
-        'displayName': user.displayName,
-        'photoUrl': user.photoUrl,
-        'creationTimestamp': user.metadata.creationTimestamp,
-        'reputation': 10,
-      });
-    }
   }
 
   @override
