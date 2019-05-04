@@ -37,5 +37,5 @@ String parseUserCoursesPursued(data) {
 }
 
 String parseUserPhotoUrl(data) {
-  return data['photoUrl'];
+  return data['photoUrl'] ?? '';
 }

@@ -15,7 +15,7 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Display the user's photo if available
-    if (photoUrl != null) {
+    if (photoUrl != null && photoUrl.length > 0) {
       return CircleAvatar(
         radius: radius,
         backgroundImage: NetworkImage(photoUrl),
@@ -23,7 +23,7 @@ class UserIcon extends StatelessWidget {
     }
 
     // Otherwise, display the user's initials with a random BG color
-    if (displayName != null) {
+    if (displayName != null && displayName.length > 0) {
       return CircleAvatar(
         radius: radius,
         backgroundColor: Theme.of(context).accentColor,
