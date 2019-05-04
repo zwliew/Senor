@@ -55,12 +55,13 @@ class _AppHomeState extends State<_AppHome> {
               .getDocuments()
               .then((snapshot) {
             if (snapshot.documents.length == 0) {
-              curUserBloc.dispatch(LoggedOut());
+              curUserBloc.dispatch(const LoggedOut());
               return;
             }
             final doc = snapshot.documents[0];
             curUserBloc.dispatch(LoggedIn(doc.documentID));
           });
+
           return const HomePage();
         }
 

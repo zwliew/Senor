@@ -10,7 +10,9 @@ class LoggedIn extends CurrentUserEvent {
   const LoggedIn(this.id) : super();
 }
 
-class LoggedOut extends CurrentUserEvent {}
+class LoggedOut extends CurrentUserEvent {
+  const LoggedOut() : super();
+}
 
 class CurrentUserBloc extends Bloc<CurrentUserEvent, CurrentUser> {
   @override
