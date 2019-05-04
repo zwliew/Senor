@@ -35,3 +35,7 @@ String parseUserUniversityAttended(data) {
 String parseUserCoursesPursued(data) {
   return data['coursesPursued'] ?? '';
 }
+
+String parseUserPhotoUrl(data) {
+  return data['photoUrl'];
+}

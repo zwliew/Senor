@@ -58,7 +58,7 @@ class _PageDetails extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: UserIcon(
                     radius: 48,
-                    photoUrl: data['photoUrl'],
+                    photoUrl: parseUserPhotoUrl(data),
                     displayName: parseUserDisplayName(data),
                   ),
                 ),

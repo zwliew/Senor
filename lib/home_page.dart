@@ -291,7 +291,7 @@ class _DiscoverPageSearchDelegate extends SearchDelegate<String> {
                   final doc = docs[index];
                   return ListTile(
                     leading: UserIcon(
-                      photoUrl: doc['photoUrl'],
+                      photoUrl: parseUserPhotoUrl(doc),
                       displayName: parseUserDisplayName(doc),
                     ),
                     title: Text(
