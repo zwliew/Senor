@@ -50,7 +50,7 @@ class LoginPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.email),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   const Text('Sign in with email'),
                 ],
               ),
