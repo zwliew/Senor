@@ -46,7 +46,14 @@ class LoginPage extends StatelessWidget {
             ),
             RaisedButton(
               color: Colors.white,
-              child: const Text('Sign in with email'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.email),
+                  SizedBox(width: 16.0),
+                  const Text('Sign in with email'),
+                ],
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
