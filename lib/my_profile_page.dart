@@ -10,20 +10,6 @@ import 'package:senor/util/database.dart';
 import 'package:senor/util/profile.dart';
 
 class MyProfilePage extends StatelessWidget {
-  const MyProfilePage({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: const Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: const _PageDetails(),
-      ),
-    );
-  }
-}
-
-class _PageDetails extends StatelessWidget {
   static const _describeMyselfField = 'describeMyself';
   static const _universityAttendedField = 'universityAttended';
   static const _coursesPursuedField = 'coursesPursued';
@@ -35,7 +21,7 @@ class _PageDetails extends StatelessWidget {
   // that the user is not currently typing
   static const _textEditDelayMs = 750;
 
-  const _PageDetails({Key key}) : super(key: key);
+  const MyProfilePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,180 +38,185 @@ class _PageDetails extends StatelessWidget {
             }
 
             final data = snapshot.data;
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: UserIcon(
-                    radius: 48,
-                    photoUrl: parseUserPhotoUrl(data),
-                    displayName: parseUserDisplayName(data),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    parseUserDisplayName(data),
-                    style: Theme.of(context).textTheme.headline,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ProfileTidbit(
-                        data: parseUserReputation(data).toString(),
-                        desc: 'REP',
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: UserIcon(
+                        radius: 48,
+                        photoUrl: parseUserPhotoUrl(data),
+                        displayName: parseUserDisplayName(data),
                       ),
-                      ProfileTidbit(
-                        data: buildProfileDateString(
-                          parseUserCreationTimestamp(data),
-                        ),
-                        desc: 'JOINED',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        parseUserDisplayName(data),
+                        style: Theme.of(context).textTheme.headline,
                       ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                Text(
-                  'About myself',
-                  style: Theme.of(context).textTheme.body2.apply(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _DropDownListItem(
-                        ref: ref,
-                        field: 'gender',
-                        values: const [
-                          'Male',
-                          'Female',
-                          'Others',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ProfileTidbit(
+                            data: parseUserReputation(data).toString(),
+                            desc: 'REP',
+                          ),
+                          ProfileTidbit(
+                            data: buildProfileDateString(
+                              parseUserCreationTimestamp(data),
+                            ),
+                            desc: 'JOINED',
+                          ),
                         ],
                       ),
-                      _DropDownListItem(
-                        ref: ref,
-                        field: 'religion',
-                        values: const [
-                          'Buddhist',
-                          'Christian',
-                          'Free thinker',
-                          'Hindu',
-                          'Islam',
-                          'Roman Catholic',
-                          'Sikh',
-                          'Others',
+                    ),
+                    const Divider(),
+                    Text(
+                      'About myself',
+                      style: Theme.of(context).textTheme.body2.apply(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _DropDownListItem(
+                            ref: ref,
+                            field: 'gender',
+                            values: const [
+                              'Male',
+                              'Female',
+                              'Others',
+                            ],
+                          ),
+                          _DropDownListItem(
+                            ref: ref,
+                            field: 'religion',
+                            values: const [
+                              'Buddhist',
+                              'Christian',
+                              'Free thinker',
+                              'Hindu',
+                              'Islam',
+                              'Roman Catholic',
+                              'Sikh',
+                              'Others',
+                            ],
+                          ),
+                          _DropDownListItem(
+                            ref: ref,
+                            field: 'race',
+                            values: const [
+                              'Chinese',
+                              'Malay',
+                              'Indian',
+                              'Eurasian',
+                              'Hispanic',
+                              'Caucasian',
+                              'African',
+                              'Others',
+                            ],
+                          ),
                         ],
                       ),
-                      _DropDownListItem(
-                        ref: ref,
-                        field: 'race',
-                        values: const [
-                          'Chinese',
-                          'Malay',
-                          'Indian',
-                          'Eurasian',
-                          'Hispanic',
-                          'Caucasian',
-                          'African',
-                          'Others',
+                    ),
+                    TextFieldListItem(
+                      label: 'Describe Myself',
+                      icon: Icons.person_outline,
+                      onChanged: (value) {
+                        ref.updateData({
+                          _describeMyselfField: value.trim(),
+                        });
+                      },
+                      stream: ref.snapshots(),
+                      field: _describeMyselfField,
+                      delayMs: _textEditDelayMs,
+                    ),
+                    const Divider(),
+                    Text(
+                      'Education background',
+                      style: Theme.of(context).textTheme.body2.apply(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        children: [
+                          TextFieldListItem(
+                            label: ProfileLabel.universityAttended,
+                            icon: Icons.account_balance,
+                            onChanged: (value) {
+                              ref.updateData({
+                                _universityAttendedField: value.trim(),
+                              });
+                            },
+                            stream: ref.snapshots(),
+                            field: _universityAttendedField,
+                            delayMs: _textEditDelayMs,
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.coursesPursured,
+                            icon: Icons.book,
+                            onChanged: (value) {
+                              ref.updateData({
+                                _coursesPursuedField: value.trim(),
+                              });
+                            },
+                            stream: ref.snapshots(),
+                            field: _coursesPursuedField,
+                            delayMs: _textEditDelayMs,
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.highSchoolAttended,
+                            icon: Icons.account_balance,
+                            onChanged: (value) {
+                              ref.updateData({
+                                _highSchoolAttendedField: value.trim(),
+                              });
+                            },
+                            stream: ref.snapshots(),
+                            field: _highSchoolAttendedField,
+                            delayMs: _textEditDelayMs,
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.extracurricularsTaken,
+                            icon: Icons.golf_course,
+                            onChanged: (value) {
+                              ref.updateData({
+                                _extracurricularsTakenField: value.trim(),
+                              });
+                            },
+                            stream: ref.snapshots(),
+                            field: _extracurricularsTakenField,
+                            delayMs: _textEditDelayMs,
+                          ),
+                          TextFieldListItem(
+                            label: ProfileLabel.leadershipPositions,
+                            icon: Icons.people,
+                            onChanged: (value) {
+                              ref.updateData({
+                                _leadershipPositionsField: value.trim(),
+                              });
+                            },
+                            stream: ref.snapshots(),
+                            field: _leadershipPositionsField,
+                            delayMs: _textEditDelayMs,
+                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                TextFieldListItem(
-                  label: 'Describe Myself',
-                  icon: Icons.person_outline,
-                  onChanged: (value) {
-                    ref.updateData({
-                      _describeMyselfField: value.trim(),
-                    });
-                  },
-                  stream: ref.snapshots(),
-                  field: _describeMyselfField,
-                  delayMs: _textEditDelayMs,
-                ),
-                const Divider(),
-                Text(
-                  'Education background',
-                  style: Theme.of(context).textTheme.body2.apply(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Column(
-                    children: [
-                      TextFieldListItem(
-                        label: ProfileLabel.universityAttended,
-                        icon: Icons.account_balance,
-                        onChanged: (value) {
-                          ref.updateData({
-                            _universityAttendedField: value.trim(),
-                          });
-                        },
-                        stream: ref.snapshots(),
-                        field: _universityAttendedField,
-                        delayMs: _textEditDelayMs,
-                      ),
-                      TextFieldListItem(
-                        label: ProfileLabel.coursesPursured,
-                        icon: Icons.book,
-                        onChanged: (value) {
-                          ref.updateData({
-                            _coursesPursuedField: value.trim(),
-                          });
-                        },
-                        stream: ref.snapshots(),
-                        field: _coursesPursuedField,
-                        delayMs: _textEditDelayMs,
-                      ),
-                      TextFieldListItem(
-                        label: ProfileLabel.highSchoolAttended,
-                        icon: Icons.account_balance,
-                        onChanged: (value) {
-                          ref.updateData({
-                            _highSchoolAttendedField: value.trim(),
-                          });
-                        },
-                        stream: ref.snapshots(),
-                        field: _highSchoolAttendedField,
-                        delayMs: _textEditDelayMs,
-                      ),
-                      TextFieldListItem(
-                        label: ProfileLabel.extracurricularsTaken,
-                        icon: Icons.golf_course,
-                        onChanged: (value) {
-                          ref.updateData({
-                            _extracurricularsTakenField: value.trim(),
-                          });
-                        },
-                        stream: ref.snapshots(),
-                        field: _extracurricularsTakenField,
-                        delayMs: _textEditDelayMs,
-                      ),
-                      TextFieldListItem(
-                        label: ProfileLabel.leadershipPositions,
-                        icon: Icons.people,
-                        onChanged: (value) {
-                          ref.updateData({
-                            _leadershipPositionsField: value.trim(),
-                          });
-                        },
-                        stream: ref.snapshots(),
-                        field: _leadershipPositionsField,
-                        delayMs: _textEditDelayMs,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             );
           },
         );
