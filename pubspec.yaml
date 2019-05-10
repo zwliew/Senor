@@ -25,7 +25,7 @@ dependencies:
   flutter_bloc: ^0.13.0
   image_picker: ^0.6.0
   firebase_storage: ^3.0.0
-  cached_network_image: ^0.7.0
+  cached_network_image: ^0.8.0
   timeago: ^2.0.14
   flutter_auth_buttons: ^0.5.0
 
