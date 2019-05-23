@@ -12,7 +12,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "capitalize": "2.0.0",
-    "firebase-admin": "7.4.0",
+    "firebase-admin": "8.0.0",
     "firebase-functions": "2.3.1",
     "sentencer": "0.2.0"
   },
