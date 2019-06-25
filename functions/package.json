@@ -13,7 +13,7 @@
   "dependencies": {
     "capitalize": "2.0.0",
     "firebase-admin": "8.2.0",
-    "firebase-functions": "3.0.1",
+    "firebase-functions": "3.0.2",
     "sentencer": "0.2.0"
   },
   "devDependencies": {
